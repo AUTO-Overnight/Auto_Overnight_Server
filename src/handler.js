@@ -285,11 +285,18 @@ module.exports.findPointList = async (event) => {
   //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   //학번 //학생 이름
 
-  const {yy, tmGbn, schregNo, userNm, cookies} = JSON.parse(event.body);
+  const {schregNo, userNm, cookies} = JSON.parse(event.body);
 
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  let yy;                       // 년도
+  let tmGbn;                    // 학기
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   let cmpScr = [];              // 상벌점
   let lifSstArdGbn = [];        // 상벌구분 (1 : 상점 2 : 벌점)
@@ -298,7 +305,22 @@ module.exports.findPointList = async (event) => {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, schregNo, userNm);
+    // 년도, 학기 찾기
+  await requestFunc.findYYtmgbn(xmls.findYYtmgbnXML, axios)
+  .then((res) => {
+      let $ = cheerio.load(res.data, {
+          xmlMode: true
+        });
+
+      yy = $('Col[id="yy"]').text(yy);
+      tmGbn = $('Col[id="tmGbn"]').text(tmGbn);
+  })
+  .catch((e) =>{
+    console.log(e);
+    requestFunc.makeErrorResponse(4001, "년도, 학기 찾기 실패");
+  });
+
+  let findPointListXML = xmls.makeFindPointListXML("2021", "5", schregNo, userNm);
 
   await requestFunc.findPointList(findPointListXML, axios)
   .then((res) =>{
@@ -326,7 +348,7 @@ module.exports.findPointList = async (event) => {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse(4001, "상벌점 내역 요청 실패");
+    requestFunc.makeErrorResponse(4002, "상벌점 내역 요청 실패");
   })
 
   const body  = {
