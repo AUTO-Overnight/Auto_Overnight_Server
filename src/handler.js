@@ -320,7 +320,7 @@ module.exports.findPointList = async (event) => {
     requestFunc.makeErrorResponse(4001, "년도, 학기 찾기 실패");
   });
 
-  let findPointListXML = xmls.makeFindPointListXML("2021", "5", schregNo, userNm);
+  let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, schregNo, userNm);
 
   await requestFunc.findPointList(findPointListXML, axios)
   .then((res) =>{
