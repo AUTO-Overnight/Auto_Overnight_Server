@@ -15,7 +15,7 @@ axios.defaults.maxRedirects = 10;           // 리다이렉트 최댓값 -> 10�
 axios.defaults.headers.post["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36";
 axios.defaults.headers.get["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36";
 
-module.exports.login = async (event) => {
+module.exports.login = async (event, context, callback) => {
 
   const {id, password} = JSON.parse(event.body);
   const user = `internalId=${id}&internalPw=${password}&gubun=inter`;
@@ -44,7 +44,7 @@ module.exports.login = async (event) => {
   .then()
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse(101, "첫 로그인 실패");
+    requestFunc.makeErrorResponse("첫 로그인 실패", callback);
   });
 
   // 로그인 하기 위한 base64 encode
@@ -56,7 +56,7 @@ module.exports.login = async (event) => {
     cookies = res.config.headers.Cookie;
   })
   .catch((e) => {
-    requestFunc.makeErrorResponse(102, "통합 정보 시스템 로그인 실패")
+    requestFunc.makeErrorResponse("통합 정보 시스템 로그인 실패", callback)
   });
 
   // 학생 이름 찾기
@@ -66,10 +66,14 @@ module.exports.login = async (event) => {
           xmlMode: true
       });
       userNm = $('Col[id="userNm"]').text();
+      
+      if (userNm == "") {
+        requestFunc.makeErrorResponse("비밀번호가 맞지 않습니다.", callback);
+      }
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse(103, "학생 이름 찾기 실패");
+    requestFunc.makeErrorResponse("학생 이름 찾기 실패", callback);
   });
 
   // 년도, 학기 찾기
@@ -84,7 +88,7 @@ module.exports.login = async (event) => {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse(104, "년도, 학기 찾기 실패");
+    requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
@@ -97,7 +101,7 @@ module.exports.login = async (event) => {
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse(105, "외박 신청 내역 요청 실패");
+    requestFunc.makeErrorResponse("외박 신청 내역 요청 실패", callback);
   });
 
   const body  = {
@@ -150,7 +154,7 @@ module.exports.sendStayOut = async (event) => {
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse(201, "학생 이름 찾기 실패");
+    requestFunc.makeErrorResponse("학생 이름 찾기 실패", callback);
   });
 
   // 년도, 학기 찾기
@@ -165,7 +169,7 @@ module.exports.sendStayOut = async (event) => {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse(202, "년도, 학기 찾기 실패");
+    requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
@@ -181,7 +185,7 @@ module.exports.sendStayOut = async (event) => {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse(203, "생활관 학생 구분 번호 찾기 실패");
+    requestFunc.makeErrorResponse("생활관 학생 구분 번호 찾기 실패", callback);
   });
 
   let sendStayOutXML;
@@ -196,7 +200,7 @@ module.exports.sendStayOut = async (event) => {
       .then()
       .catch((e) =>{
         console.log(e);
-        requestFunc.makeErrorResponse(204, "외박 신청 요청 실패");
+        requestFunc.makeErrorResponse("외박 신청 요청 실패", callback);
       })
       
     } 
@@ -208,7 +212,7 @@ module.exports.sendStayOut = async (event) => {
       .then()
       .catch((e) =>{
         console.log(e);
-        requestFunc.makeErrorResponse(204, "외박 신청 요청 실패");
+        requestFunc.makeErrorResponse("외박 신청 요청 실패", callback);
       })
     }
   }
@@ -220,7 +224,7 @@ module.exports.sendStayOut = async (event) => {
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse(205, "외박 신청 내역 요청 실패");
+    requestFunc.makeErrorResponse("외박 신청 내역 요청 실패", callback);
   });
 
   const body  = {
@@ -263,7 +267,7 @@ module.exports.findStayOutList = async (event) => {
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse(301, "외박 신청 내역 요청 실패");
+    requestFunc.makeErrorResponse("외박 신청 내역 요청 실패", callback);
   });
 
   const body  = {
@@ -317,7 +321,7 @@ module.exports.findPointList = async (event) => {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse(4001, "년도, 학기 찾기 실패");
+    requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
   });
 
   let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, schregNo, userNm);
@@ -348,7 +352,7 @@ module.exports.findPointList = async (event) => {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse(4002, "상벌점 내역 요청 실패");
+    requestFunc.makeErrorResponse("상벌점 내역 요청 실패", callback);
   })
 
   const body  = {

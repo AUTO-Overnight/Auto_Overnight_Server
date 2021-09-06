@@ -50,13 +50,8 @@ function parseStayOutList(response, outStayFrDt, outStayToDt, outStayStGbn) {
 }
 
 // 에러 메세지 출력
-function makeErrorResponse(code, message) {
-    return {
-        statusCode: code,
-        body: JSON.stringify({
-            message: message
-        }),
-    }
+function makeErrorResponse(message, callback) {
+    callback(null, { statusCode: 404, body: message, headers: { 'Content-Type': 'text/plain' } });
 }
 
 exports.findUserName = findUserName;
