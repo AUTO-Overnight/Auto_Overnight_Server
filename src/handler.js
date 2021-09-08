@@ -121,7 +121,7 @@ module.exports.login = async (event, context, callback) => {
   };
 };
 
-module.exports.sendStayOut = async (event) => {
+module.exports.sendStayOut = async (event, context, callback) => {
 
   ///////////////////////////////////////쿠키, 응답 선언하기////////////////////////////////////////////
   const {date_list, is_weekend, outStayAplyDt, schregNo, cookies} = JSON.parse(event.body);
@@ -240,7 +240,7 @@ module.exports.sendStayOut = async (event) => {
   }
 }
 
-module.exports.findStayOutList = async (event) => {
+module.exports.findStayOutList = async (event, context, callback) => {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -282,7 +282,7 @@ module.exports.findStayOutList = async (event) => {
   }
 }
 
-module.exports.findPointList = async (event) => {
+module.exports.findPointList = async (event, context, callback) => {
 
   ///////////////////////////////////////쿠키, 응답 선언하기////////////////////////////////////////////
 
