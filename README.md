@@ -12,7 +12,7 @@ serverless의 nodejs 템플릿과 배포를 이용했습니다.
 
 ### login
 
-로그인을 시도하는 함수입니다.
+* 로그인을 시도하는 함수입니다.
 
 #### 입력
 
@@ -49,15 +49,15 @@ serverless의 nodejs 템플릿과 배포를 이용했습니다.
 }
 ```
 
-yy  년도
+* yy  년도
 
-tmGbn  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
+* tmGbn  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
 
-outStayStGbn  1 : 미승인 / 2 : 승인
+* outStayStGbn  1 : 미승인 / 2 : 승인
 
 ### sendStayOut
 
-외박 신청을 하는 함수입니다.
+* 외박 신청을 하는 함수입니다.
 
 #### 입력
 
@@ -71,11 +71,11 @@ outStayStGbn  1 : 미승인 / 2 : 승인
 }
 ```
 
-is_weekend  0 : 평일 / 1 : 주말
+* is_weekend  0 : 평일 / 1 : 주말
 
-outStayAplyDt  오늘 날짜
+* outStayAplyDt  오늘 날짜
 
-schregNo  학번
+* schregNo  학번
 
 #### 출력
 
@@ -117,11 +117,11 @@ schregNo  학번
 }
 ```
 
-외박신청에 성공하면 외박 신청 내역을 return 합니다.
+* 외박신청에 성공하면 외박 신청 내역을 return 합니다.
 
 ### findStayOutList
 
-외박 신청 내역을 조회하는 함수입니다.
+* 외박 신청 내역을 조회하는 함수입니다.
 
 #### 입력
 
@@ -135,11 +135,11 @@ schregNo  학번
 }
 ```
 
-yy  년도
+* yy  년도
 
-tmGbn  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
+* tmGbn  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
 
-schregNo  학번
+* schregNo  학번
 
 #### 출력
 
@@ -165,7 +165,7 @@ schregNo  학번
 
 ### findPointList
 
-상벌점 내역을 조회하는 함수입니다.
+* 상벌점 내역을 조회하는 함수입니다.
 
 #### 입력
 
@@ -177,7 +177,7 @@ schregNo  학번
 }
 ```
 
-schregNo  학번
+* schregNo  학번
 
 #### 출력
 
@@ -202,12 +202,12 @@ schregNo  학번
 }
 ```
 
-cmpScr  상벌점 수치
+* cmpScr  상벌점 수치
 
-lifSstArdGbn  상벌점 구분 / 1 : 상점 / 2 : 벌점
+* lifSstArdGbn  상벌점 구분 / 1 : 상점 / 2 : 벌점
 
-ardInptDt  상벌일자
+* ardInptDt  상벌일자
 
-lifSstArdCtnt  상벌내용
+* lifSstArdCtnt  상벌내용
 
 
