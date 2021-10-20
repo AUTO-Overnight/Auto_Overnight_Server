@@ -27,6 +27,7 @@ module.exports.login = async (event, context, callback) => {
   let yy;               //년도
   let tmGbn;            //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   let userNm;           //학생 이름
+  let persNo;           //학번
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,13 +60,14 @@ module.exports.login = async (event, context, callback) => {
     requestFunc.makeErrorResponse("통합 정보 시스템 로그인 실패", callback)
   });
 
-  // 학생 이름 찾기
+  // 학생 이름, 학번 찾기
   await requestFunc.findUserName(xmls.findUserNmXML, axios)
   .then((res) => {
       let $ = cheerio.load(res.data, {
           xmlMode: true
       });
       userNm = $('Col[id="userNm"]').text();
+      persNo = $('Col[id="persNo"]').text();
       
       if (userNm == "") {
         requestFunc.makeErrorResponse("비밀번호가 맞지 않습니다.", callback);
@@ -73,7 +75,7 @@ module.exports.login = async (event, context, callback) => {
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse("학생 이름 찾기 실패", callback);
+    requestFunc.makeErrorResponse("학생 이름 / 학번 찾기 실패", callback);
   });
 
   // 년도, 학기 찾기
@@ -92,7 +94,7 @@ module.exports.login = async (event, context, callback) => {
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
-  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, id , userNm);
+  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, persNo, userNm);
 
   // 외박 신청 내역 조회하기
   await requestFunc.findStayOutList(findLiveStuNoXML, axios)
@@ -141,6 +143,7 @@ module.exports.sendStayOut = async (event, context, callback) => {
   let tmGbn;            //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   let userNm;           //학생 이름
   let livstuNo;         //학생 거주 번호
+  let persNo;           //학번
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
@@ -151,6 +154,7 @@ module.exports.sendStayOut = async (event, context, callback) => {
           xmlMode: true
       });
       userNm = $('Col[id="userNm"]').text();
+      persNo = $('Col[id="persNo"]').text();
   })
   .catch((e) => {
     console.log(e);
@@ -173,7 +177,7 @@ module.exports.sendStayOut = async (event, context, callback) => {
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
-  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, schregNo , userNm);
+  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, persNo , userNm);
 
   // 생활관 거주 학생 구분 번호 찾기
   await requestFunc.findLiveStuNo(findLiveStuNoXML, axios)
@@ -257,9 +261,24 @@ module.exports.findStayOutList = async (event, context, callback) => {
   let outStayToDt = [];
   let outStayStGbn = [];
 
+  let persNo;             // 학번
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, schregNo, userNm);
+  // 학번 찾기
+  await requestFunc.findUserName(xmls.findUserNmXML, axios)
+    .then((res) => {
+        let $ = cheerio.load(res.data, {
+            xmlMode: true
+        });
+        persNo = $('Col[id="persNo"]').text();
+    })
+    .catch((e) => {
+      console.log(e);
+      requestFunc.makeErrorResponse("학번 찾기 실패", callback);
+    });
+
+  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, persNo, userNm);
 
   await requestFunc.findStayOutList(findLiveStuNoXML, axios)
   .then((res) =>{ 
@@ -299,6 +318,7 @@ module.exports.findPointList = async (event, context, callback) => {
 
   let yy;                       // 년도
   let tmGbn;                    // 학기
+  let persNo;                   // 학번
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -308,6 +328,19 @@ module.exports.findPointList = async (event, context, callback) => {
   let lifSstArdCtnt = [];       // 상벌내용
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 학번 찾기
+    await requestFunc.findUserName(xmls.findUserNmXML, axios)
+    .then((res) => {
+        let $ = cheerio.load(res.data, {
+            xmlMode: true
+        });
+        persNo = $('Col[id="persNo"]').text();
+    })
+    .catch((e) => {
+      console.log(e);
+      requestFunc.makeErrorResponse("학번 찾기 실패", callback);
+    });
 
     // 년도, 학기 찾기
   await requestFunc.findYYtmgbn(xmls.findYYtmgbnXML, axios)
@@ -324,7 +357,7 @@ module.exports.findPointList = async (event, context, callback) => {
     requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
   });
 
-  let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, schregNo, userNm);
+  let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, persNo, userNm);
 
   await requestFunc.findPointList(findPointListXML, axios)
   .then((res) =>{
