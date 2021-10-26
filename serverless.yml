@@ -84,4 +84,10 @@ functions:
       - http:
           path: findpointlist
           method: post 
+  checkVersion:
+    handler: src/handler.checkVersion
+    events:
+      - http:
+          path: checkversion
+          method: get
   

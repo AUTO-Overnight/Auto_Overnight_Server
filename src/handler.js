@@ -126,7 +126,7 @@ module.exports.login = async (event, context, callback) => {
 module.exports.sendStayOut = async (event, context, callback) => {
 
   ///////////////////////////////////////쿠키, 응답 선언하기////////////////////////////////////////////
-  const {date_list, is_weekend, outStayAplyDt, schregNo, cookies} = JSON.parse(event.body);
+  const {date_list, is_weekend, outStayAplyDt, cookies} = JSON.parse(event.body);
 
   //is_weekend -> 평일이 0, 주말이 1
   const cookieJar = new tough.CookieJar(); 
@@ -251,7 +251,7 @@ module.exports.findStayOutList = async (event, context, callback) => {
   //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   //학번 //학생 이름
 
-  const {yy, tmGbn, schregNo, userNm, cookies} = JSON.parse(event.body);
+  const {yy, tmGbn, userNm, cookies} = JSON.parse(event.body);
   
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
@@ -308,7 +308,7 @@ module.exports.findPointList = async (event, context, callback) => {
   //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   //학번 //학생 이름
 
-  const {schregNo, userNm, cookies} = JSON.parse(event.body);
+  const {userNm, cookies} = JSON.parse(event.body);
 
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
@@ -400,5 +400,17 @@ module.exports.findPointList = async (event, context, callback) => {
     body : JSON.stringify(body)
   }
   
+}
+
+module.exports.checkVersion = async (event, context, callback) => {
+
+  const body  = {
+    "version" : "104"
+  };
+
+  return {
+    statusCode: 200,
+    body : JSON.stringify(body)
+  }
 }
 
