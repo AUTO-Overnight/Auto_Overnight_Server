@@ -41,7 +41,7 @@ module.exports.login = async (event, context, callback) => {
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   // 처음 로그인 하기
-  await axios.post("https://ksc.kpu.ac.kr/sso/login_proc.jsp", user)
+  await axios.post("https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null", user)
   .then()
   .catch((e) => {
     console.log(e);
@@ -52,7 +52,7 @@ module.exports.login = async (event, context, callback) => {
   base64encode = Buffer.from(id, "utf8").toString('base64');
 
   // 통정시 로그인, 쿠키 저장하기
-  await axios.get(`https://iis.kpu.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=${base64encode}`)
+  await axios.get(`https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=${base64encode}`)
   .then((res)=>{
     cookies = res.config.headers.Cookie;
   })
