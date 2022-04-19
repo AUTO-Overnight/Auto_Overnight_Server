@@ -19,8 +19,8 @@
 
 ```
 {
-    "id" : "",
-    "password" : ""
+    "id" : "201112345678",
+    "password" : "1234"
 }
 ```
 
@@ -28,7 +28,7 @@
 
 ```
 {
-    "cookies": "_SSO_Global_Logout_url=get%5Ehttps%3A%2F%2Fportal.kpu.ac.kr%3A443%2Fsso%2Flogout.jsp%24get%5Ehttps%3A%2F%2Fiis.kpu.ac.kr%3A443%2Fcom%2FSsoCtr%2Fj_logout.do%24; kalogin=cTOY5WTXaWNWjA==$server; JSESSIONID=m1Y065aTXSKsmRDvwcIqUPkOBRXPaLpXLs5Jia3YNSGdyKa0pkrNR0gutMiLf1Np.amV1c19kb21haW4vanN2XzI=",
+    "cookies": "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI=",
     "name": "홍길동",
     "yy" : 2021,
     "tmGbn" : 2,
@@ -67,8 +67,8 @@
     "date_list" : [20210831, 20210901, 20210902, 20210903, 20210904, 20210905],
     "is_weekend" : [0, 0, 0, 1, 1, 1],
     "outStayAplyDt" : "20210831",
-    "schregNo" : "",
-    "cookies" : ""
+    "schregNo" : "201112345678",
+    "cookies" : "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI= "
 }
 ```
 
@@ -130,9 +130,9 @@
 {
     "yy" : "2021",
     "tmGbn" : "2",
-    "schregNo" : "",
+    "schregNo" : "201112345678",
     "userNm" : "홍길동",
-    "cookies" : ""
+    "cookies" : "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI="
 }
 ```
 
@@ -172,9 +172,9 @@
 
 ```
 {
-    "schregNo" : "",
+    "schregNo" : "201112345678",
     "userNm" : "홍길동",
-    "cookies" : ""
+    "cookies" : "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI="
 }
 ```
 
