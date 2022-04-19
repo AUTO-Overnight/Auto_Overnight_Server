@@ -1,13 +1,14 @@
 # Auto_Overnight_API
 
-외박 신청 및 로그인 등 여러 요청을 처리하는 aws lambda용 backend입니다.
+- 외박 신청 및 로그인 등 여러 요청을 처리하는 API입니다.
 
-serverless의 nodejs 템플릿과 배포를 이용했습니다.
+- serverless의 nodejs 템플릿을 이용해 AWS lambda에 배포했습니다.
+
+- 자세한 코드는 [여기](https://github.com/AUTO-Overnight/Auto_Overnight_API/blob/main/src/handler.js)를 참조해주세요!
 
 ## API
 
-모두 post를 사용합니다.
-모든 입력은 JSON으로 보내면 됩니다.
+- 모든 요청은 POST를 사용합니다.
 
 
 ### login
