@@ -6,7 +6,7 @@
 
 - 자세한 코드는 [여기](https://github.com/AUTO-Overnight/Auto_Overnight_API/blob/main/src/handler.js)를 참조해주세요!
 
-## API
+## 📝 API
 
 - 모든 요청은 POST를 사용합니다.
 
@@ -50,9 +50,9 @@
 }
 ```
 
-* yy  년도
+* yy 년도
 
-* tmGbn  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
+* tmGbn  학기 구분 ( 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6 )
 
 * outStayStGbn  1 : 미승인 / 2 : 승인
 
