@@ -24,6 +24,10 @@
 }
 ```
 
+* `id` 학교 홈페이지 id
+
+* `password` 학교 홈페이지 비밀번호
+
 #### 출력
 
 ```
@@ -50,11 +54,19 @@
 }
 ```
 
-* yy 년도
+* `cookies` 로그인하고 얻어온 쿠키 세션
 
-* tmGbn  학기 구분 ( 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6 )
+* `name` 이름
 
-* outStayStGbn  1 : 미승인 / 2 : 승인
+* `yy` 년도
+
+* `tmGbn`  학기 구분 ( 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6 )
+
+* `outStayFrDt` 외박신청 시작 날짜
+
+* `outStayToDt` 외박신청 종료 날짜
+
+* `outStayStGbn`  1 : 미승인 / 2 : 승인
 
 ### sendStayOut
 
@@ -72,11 +84,15 @@
 }
 ```
 
-* is_weekend  0 : 평일 / 1 : 주말
+* `date_list` 외박신청 날짜가 담긴 날짜의 리스트
 
-* outStayAplyDt  오늘 날짜
+* `is_weekend`  0 : 평일 / 1 : 주말
 
-* schregNo  학번
+* `outStayAplyDt`  오늘 날짜
+
+* `schregNo`  학번
+
+* `cookies` 로그인하고 얻어온 쿠키 세션
 
 #### 출력
 
@@ -120,6 +136,12 @@
 
 * 외박신청에 성공하면 외박 신청 내역을 return 합니다.
 
+* `outStayFrDt` 외박신청 시작 날짜
+
+* `outStayToDt` 외박신청 종료 날짜
+
+* `outStayStGbn`  1 : 미승인 / 2 : 승인
+
 ### findStayOutList
 
 * 외박 신청 내역을 조회하는 함수입니다.
@@ -136,11 +158,15 @@
 }
 ```
 
-* yy  년도
+* `yy`  년도
 
-* tmGbn  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
+* `tmGbn`  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
 
-* schregNo  학번
+* `schregNo` 학번
+
+* `userNm` 이름
+
+* `cookies` 로그인하고 얻어온 쿠키 세션
 
 #### 출력
 
@@ -164,6 +190,12 @@
 }
 ```
 
+* `outStayFrDt` 외박신청 시작 날짜
+
+* `outStayToDt` 외박신청 종료 날짜
+
+* `outStayStGbn`  1 : 미승인 / 2 : 승인
+
 ### findPointList
 
 * 상벌점 내역을 조회하는 함수입니다.
@@ -178,7 +210,11 @@
 }
 ```
 
-* schregNo  학번
+* `schregNo` 학번
+
+* `userNm` 이름
+
+* `cookies` 로그인하고 얻어온 쿠키 세션
 
 #### 출력
 
@@ -203,12 +239,10 @@
 }
 ```
 
-* cmpScr  상벌점 수치
+* `cmpScr`  상벌점 수치
 
-* lifSstArdGbn  상벌점 구분 / 1 : 상점 / 2 : 벌점
+* `lifSstArdGbn`  상벌점 구분 / 1 : 상점 / 2 : 벌점
 
-* ardInptDt  상벌일자
+* `ardInptDt`  상벌일자
 
-* lifSstArdCtnt  상벌내용
-
-
+* `lifSstArdCtnt`  상벌내용
