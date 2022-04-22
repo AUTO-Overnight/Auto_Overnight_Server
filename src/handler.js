@@ -6,6 +6,7 @@ import requestFunc from "./requestFunc";
 import loginFunction from "./functions/login";
 import sendStayOutFunction from "./functions/sendStayOut";
 import findStayOutListFunction from "./functions/findStayOutList";
+import findPointListFunction from "./functions/findPointList";
 
 import axios from "axios";
 import cheerio from "cheerio";
@@ -32,7 +33,7 @@ module.exports.login = async (event, context, callback) => {
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
 
-  const body = loginFunction(axios, user);
+  const body = await loginFunction(axios, user);
 
   // 200 코드, 쿠키, 학생 이름, 외박 신청 내역 return
   return {
@@ -54,7 +55,7 @@ module.exports.sendStayOut = async (event, context, callback) => {
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  const body = sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt);
+  const body = await sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt);
   
   return {
     statusCode: 200,
@@ -75,7 +76,7 @@ module.exports.findStayOutList = async (event, context, callback) => {
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  const body = findStayOutListFunction(axios, yy, tmGbn, userNm);
+  const body = await findStayOutListFunction(axios, yy, tmGbn, userNm);
 
   return {
     statusCode: 200,
@@ -86,97 +87,16 @@ module.exports.findStayOutList = async (event, context, callback) => {
 // 상벌점 조회 함수
 module.exports.findPointList = async (event, context, callback) => {
 
-  ///////////////////////////////////////쿠키, 응답 선언하기////////////////////////////////////////////
-
-  //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
-  //학번 //학생 이름
-
+  // body에서 상벌점 조회 위한 정보 받아오기
+  // 학생 이름, 쿠키
   const {userNm, cookies} = event.queryStringParameters;
 
+  // 쿠키 설정
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-  let yy;                       // 년도
-  let tmGbn;                    // 학기
-  let persNo;                   // 학번
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-  let cmpScr = [];              // 상벌점
-  let lifSstArdGbn = [];        // 상벌구분 (1 : 상점 2 : 벌점)
-  let ardInptDt = [];           // 상벌일자
-  let lifSstArdCtnt = [];       // 상벌내용
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // 학번 찾기
-    await requestFunc.findUserName(xmls.findUserNmXML, axios)
-    .then((res) => {
-        let $ = cheerio.load(res.data, {
-            xmlMode: true
-        });
-        persNo = $('Col[id="persNo"]').text();
-    })
-    .catch((e) => {
-      console.log(e);
-      requestFunc.makeErrorResponse("학번 찾기 실패", callback);
-    });
-
-    // 년도, 학기 찾기
-  await requestFunc.findYYtmgbn(xmls.findYYtmgbnXML, axios)
-  .then((res) => {
-      let $ = cheerio.load(res.data, {
-          xmlMode: true
-        });
-
-      yy = $('Col[id="yy"]').text(yy);
-      tmGbn = $('Col[id="tmGbn"]').text(tmGbn);
-  })
-  .catch((e) =>{
-    console.log(e);
-    requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
-  });
-
-  let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, persNo, userNm);
-
-  await requestFunc.findPointList(findPointListXML, axios)
-  .then((res) =>{
-
-    let $ = cheerio.load(res.data, {
-      xmlMode: true
-    });
-
-    $('Col[id="cmpScr"]').each((key , val)=> {
-      cmpScr.push($(val).text());
-    });
-
-    $('Col[id="lifSstArdGbn"]').each((key , val)=> {
-      lifSstArdGbn.push($(val).text());
-    });
-
-    $('Col[id="ardInptDt"]').each((key , val)=> {
-      ardInptDt.push($(val).text());
-    });
-
-    $('Col[id="lifSstArdCtnt"]').each((key , val)=> {
-      lifSstArdCtnt.push($(val).text());
-    });
-
-  })
-  .catch((e) =>{
-    console.log(e);
-    requestFunc.makeErrorResponse("상벌점 내역 요청 실패", callback);
-  })
-
-  const body  = {
-    "cmpScr" : cmpScr,
-    "lifSstArdGbn" : lifSstArdGbn,
-    "ardInptDt" : ardInptDt,
-    "lifSstArdCtnt" : lifSstArdCtnt
-  };
+  const body = await findPointListFunction(axios, userNm);
 
   return {
     statusCode: 200,
