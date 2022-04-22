@@ -3,7 +3,7 @@
 const xmls = require("./xmls");
 const requestFunc = require("./requestFunc");
 
-export default async function loginfunction(axios, user) {
+export default async function loginFunction(axios, user) {
 
   let yy;               //년도
   let tmGbn;            //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
