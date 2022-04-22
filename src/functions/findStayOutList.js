@@ -1,9 +1,10 @@
 'use strict';
 
-const xmls = require("./xmls");
-const requestFunc = require("./requestFunc");
+import xmls from "../xmls.js";
+import requestFunc from "../requestFunc.js";
+import cheerio from "cheerio";
 
-export default async function findStayOutListFunction(axios, yy, tmGbn, userNm) {
+export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, callback) {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
 

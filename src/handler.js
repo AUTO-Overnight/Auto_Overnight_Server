@@ -1,15 +1,11 @@
 'use strict';
 
-import xmls from "./xmls";
-import requestFunc from "./requestFunc";
-
-import loginFunction from "./functions/login";
-import sendStayOutFunction from "./functions/sendStayOut";
-import findStayOutListFunction from "./functions/findStayOutList";
-import findPointListFunction from "./functions/findPointList";
+import loginFunction from "./functions/login.js";
+import sendStayOutFunction from "./functions/sendStayOut.js";
+import findStayOutListFunction from "./functions/findStayOutList.js";
+import findPointListFunction from "./functions/findPointList.js";
 
 import axios from "axios";
-import cheerio from "cheerio";
 import axiosCookieJarSupport from "axios-cookiejar-support";
 import tough from "tough-cookie";
 
@@ -36,7 +32,7 @@ module.exports.login = async (event, context, callback) => {
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
 
-  const body = await loginFunction(axios, user);
+  const body = await loginFunction(axios, user, callback);
 
   // 200 코드, 쿠키, 학생 이름, 외박 신청 내역 return
   return {
@@ -58,7 +54,7 @@ module.exports.sendStayOut = async (event, context, callback) => {
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  const body = await sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt);
+  const body = await sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt, callback);
   
   return {
     statusCode: 200,
@@ -79,7 +75,7 @@ module.exports.findStayOutList = async (event, context, callback) => {
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  const body = await findStayOutListFunction(axios, yy, tmGbn, userNm);
+  const body = await findStayOutListFunction(axios, yy, tmGbn, userNm, callback);
 
   return {
     statusCode: 200,
@@ -99,7 +95,7 @@ module.exports.findPointList = async (event, context, callback) => {
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  const body = await findPointListFunction(axios, userNm);
+  const body = await findPointListFunction(axios, userNm, callback);
 
   return {
     statusCode: 200,
