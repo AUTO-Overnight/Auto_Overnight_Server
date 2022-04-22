@@ -251,7 +251,7 @@ module.exports.findStayOutList = async (event, context, callback) => {
   //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   //학번 //학생 이름
 
-  const {yy, tmGbn, userNm, cookies} = JSON.parse(event.body);
+  const {yy, tmGbn, userNm, cookies} = event.queryStringParameters;
   
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
@@ -308,7 +308,7 @@ module.exports.findPointList = async (event, context, callback) => {
   //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   //학번 //학생 이름
 
-  const {userNm, cookies} = JSON.parse(event.body);
+  const {userNm, cookies} = event.queryStringParameters;
 
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
@@ -401,16 +401,3 @@ module.exports.findPointList = async (event, context, callback) => {
   }
   
 }
-
-module.exports.checkVersion = async (event, context, callback) => {
-
-  const body  = {
-    "version" : "104"
-  };
-
-  return {
-    statusCode: 200,
-    body : JSON.stringify(body)
-  }
-}
-
