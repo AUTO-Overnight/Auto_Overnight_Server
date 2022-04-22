@@ -16,8 +16,11 @@ import tough from "tough-cookie";
 // 세션 유지 위한 쿠키 설정
 axiosCookieJarSupport(axios);
 
-axios.defaults.withCredentials = true;      // 쿠키 저장 허용
-axios.defaults.maxRedirects = 10;           // 리다이렉트 최댓값 -> 10은 되야 에러 안남 
+// 쿠키 저장 허용
+axios.defaults.withCredentials = true;
+// 리다이렉트 최댓값 -> 10은 되야 에러 안남 
+axios.defaults.maxRedirects = 10;        
+// user-agent 설정
 axios.defaults.headers.post["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36";
 axios.defaults.headers.get["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36";
 
