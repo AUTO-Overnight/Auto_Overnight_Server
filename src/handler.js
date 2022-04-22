@@ -5,6 +5,7 @@ import requestFunc from "./requestFunc";
 
 import loginFunction from "./functions/login";
 import sendStayOutFunction from "./functions/sendStayOut";
+import findStayOutListFunction from "./functions/findStayOutList";
 
 import axios from "axios";
 import cheerio from "cheerio";
@@ -19,11 +20,15 @@ axios.defaults.maxRedirects = 10;           // 리다이렉트 최댓값 -> 10�
 axios.defaults.headers.post["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36";
 axios.defaults.headers.get["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36";
 
+// 로그인 함수
 module.exports.login = async (event, context, callback) => {
 
+  // body에서 id, password 받아오기
   const {id, password} = JSON.parse(event.body);
+  // 로그인 하기 위한 데이터 생성
   const user = `internalId=${id}&internalPw=${password}&gubun=inter`;
 
+  // 쿠키 설정
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
 
@@ -37,16 +42,18 @@ module.exports.login = async (event, context, callback) => {
 
 };
 
+// 외박 신청 함수
 module.exports.sendStayOut = async (event, context, callback) => {
 
-  // body 받아오기
+  // body에서 외박 신청할 날짜에 대한 정보와 쿠키 받아오기
+  // 날짜 리스트, 주말/평일구분, 오늘 날짜, 쿠키
   const {date_list, is_weekend, outStayAplyDt, cookies} = JSON.parse(event.body);
 
   // 쿠키 설정
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
-  
+
   const body = sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt);
   
   return {
@@ -55,56 +62,20 @@ module.exports.sendStayOut = async (event, context, callback) => {
   }
 }
 
+// 외박 신청 목록 조회 함수
 module.exports.findStayOutList = async (event, context, callback) => {
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-  //년도 //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
-  //학번 //학생 이름
-
+  
+  // body에서 외박 신청 목록 조회 위한 정보 받아오기
+  // 년도, 학기, 학생 이름, 쿠키
+  // 학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   const {yy, tmGbn, userNm, cookies} = event.queryStringParameters;
   
+  // 쿠키 설정
   const cookieJar = new tough.CookieJar(); 
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
-  let outStayFrDt = [];
-  let outStayToDt = [];
-  let outStayStGbn = [];
-
-  let persNo;             // 학번
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // 학번 찾기
-  await requestFunc.findUserName(xmls.findUserNmXML, axios)
-    .then((res) => {
-        let $ = cheerio.load(res.data, {
-            xmlMode: true
-        });
-        persNo = $('Col[id="persNo"]').text();
-    })
-    .catch((e) => {
-      console.log(e);
-      requestFunc.makeErrorResponse("학번 찾기 실패", callback);
-    });
-
-  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, persNo, userNm);
-
-  await requestFunc.findStayOutList(findLiveStuNoXML, axios)
-  .then((res) =>{ 
-    requestFunc.parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
-  })
-  .catch((e) => {
-    console.log(e);
-    requestFunc.makeErrorResponse("외박 신청 내역 요청 실패", callback);
-  });
-
-  const body  = {
-    "outStayFrDt" : outStayFrDt,
-    "outStayToDt" : outStayToDt,
-    "outStayStGbn" : outStayStGbn
-  };
+  const body = findStayOutListFunction(axios, yy, tmGbn, userNm);
 
   return {
     statusCode: 200,
@@ -112,6 +83,7 @@ module.exports.findStayOutList = async (event, context, callback) => {
   }
 }
 
+// 상벌점 조회 함수
 module.exports.findPointList = async (event, context, callback) => {
 
   ///////////////////////////////////////쿠키, 응답 선언하기////////////////////////////////////////////
