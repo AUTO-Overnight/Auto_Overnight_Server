@@ -1,11 +1,10 @@
 'use strict';
 
-
 import { findUserNmXML, findYYtmgbnXML, makeFindLiveStuNoXML } from "../xmls.js";
 import { findUserName, findStayOutList, findYYtmgbn, parseStayOutList, makeErrorResponse, } from "../requestFunc.js";
 import cheerio from "cheerio";
 
-export default async function loginFunction(axios, user, callback) {
+export default async function loginFunction(axios, id, password, callback) {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +24,9 @@ export default async function loginFunction(axios, user, callback) {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // 로그인 하기 위한 데이터 생성
+  const user = `internalId=${id}&internalPw=${password}&gubun=inter`;
+
   // 처음 로그인 하기
   await axios.post("https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null", user)
   .then()
@@ -39,7 +41,7 @@ export default async function loginFunction(axios, user, callback) {
   // 통정시 로그인, 쿠키 저장하기
   await axios.get(`https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=${base64encode}`)
   .then((res)=>{
-    cookies = res.config.headers.Cookie;
+    cookies = res.config.jar;
   })
   .catch((e) => {
     makeErrorResponse("통합 정보 시스템 로그인 실패", callback)

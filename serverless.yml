@@ -77,10 +77,10 @@ functions:
     events:
       - http:
           path: findstayoutlist
-          method: get
+          method: post
   findPointList:
     handler: src/handler.findPointList
     events:
       - http:
           path: findpointlist
-          method: get 
+          method: post 
