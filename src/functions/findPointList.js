@@ -1,7 +1,7 @@
 'use strict';
 
-import xmls from "../xmls.js";
-import requestFunc from "../requestFunc.js";
+import { findUserNmXML, findYYtmgbnXML, makeFindPointListXML } from "../xmls.js";
+import { findUserName, findYYtmgbn, findPointList, makeErrorResponse } from "../requestFunc.js";
 import cheerio from "cheerio";
 
 export default async function findPointListFunction(axios, userNm, callback) {
@@ -22,7 +22,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 학번 찾기
-   await requestFunc.findUserName(xmls.findUserNmXML, axios)
+   await findUserName(findUserNmXML, axios)
     .then((res) => {
         let $ = cheerio.load(res.data, {
             xmlMode: true
@@ -31,11 +31,11 @@ export default async function findPointListFunction(axios, userNm, callback) {
     })
     .catch((e) => {
       console.log(e);
-      requestFunc.makeErrorResponse("학번 찾기 실패", callback);
+      makeErrorResponse("학번 찾기 실패", callback);
     });
 
     // 년도, 학기 찾기
-  await requestFunc.findYYtmgbn(xmls.findYYtmgbnXML, axios)
+  await findYYtmgbn(findYYtmgbnXML, axios)
   .then((res) => {
       let $ = cheerio.load(res.data, {
           xmlMode: true
@@ -46,14 +46,14 @@ export default async function findPointListFunction(axios, userNm, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
+    makeErrorResponse("년도, 학기 찾기 실패", callback);
   });
   
   // 상벌점 내역 조회 위한 xml 만들기
-  let findPointListXML = xmls.makeFindPointListXML(yy, tmGbn, persNo, userNm);
+  let findPointListXML = makeFindPointListXML(yy, tmGbn, persNo, userNm);
 
   // 상벌점 내역 조회 요청
-  await requestFunc.findPointList(findPointListXML, axios)
+  await findPointList(findPointListXML, axios)
   .then((res) =>{
 
     let $ = cheerio.load(res.data, {
@@ -79,7 +79,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse("상벌점 내역 요청 실패", callback);
+    makeErrorResponse("상벌점 내역 요청 실패", callback);
   })
 
   const body  = {

@@ -54,12 +54,3 @@ export function parseStayOutList(response, outStayFrDt, outStayToDt, outStayStGb
 export function makeErrorResponse(message, callback) {
     callback(null, { statusCode: 404, body: message, headers: { 'Content-Type': 'text/plain' } });
 }
-/*
-exports.findUserName = findUserName;
-exports.findYYtmgbn = findYYtmgbn;
-exports.findLiveStuNo = findLiveStuNo;
-exports.sendStayOut = sendStayOut;
-exports.findStayOutList = findStayOutList;
-exports.findPointList = findPointList;
-exports.parseStayOutList = parseStayOutList;
-exports.makeErrorResponse = makeErrorResponse;*/

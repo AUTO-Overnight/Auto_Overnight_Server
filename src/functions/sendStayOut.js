@@ -1,7 +1,7 @@
 'use strict';
 
-import xmls from "../xmls.js";
-import requestFunc from "../requestFunc.js";
+import { findUserNmXML, findYYtmgbnXML, makeFindLiveStuNoXML, makesendStayOutXML }  from "../xmls.js";
+import { findUserName, findYYtmgbn, findLiveStuNo, sendStayOut , findStayOutList, parseStayOutList, makeErrorResponse } from "../requestFunc.js";
 import cheerio from "cheerio";
 
 export default async function sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt, callback) {
@@ -23,7 +23,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
   // 학생 이름 찾기
-  await requestFunc.findUserName(xmls.findUserNmXML, axios)
+  await findUserName(findUserNmXML, axios)
   .then((res) => {
       let $ = cheerio.load(res.data, {
           xmlMode: true
@@ -33,11 +33,11 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse("학생 이름 찾기 실패", callback);
+    makeErrorResponse("학생 이름 찾기 실패", callback);
   });
 
   // 년도, 학기 찾기
-  await requestFunc.findYYtmgbn(xmls.findYYtmgbnXML, axios)
+  await findYYtmgbn(findYYtmgbnXML, axios)
   .then((res) => {
       let $ = cheerio.load(res.data, {
           xmlMode: true
@@ -48,14 +48,14 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse("년도, 학기 찾기 실패", callback);
+    makeErrorResponse("년도, 학기 찾기 실패", callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
-  let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, persNo , userNm);
+  let findLiveStuNoXML = makeFindLiveStuNoXML(yy, tmGbn, persNo , userNm);
 
   // 생활관 거주 학생 구분 번호 찾기
-  await requestFunc.findLiveStuNo(findLiveStuNoXML, axios)
+  await findLiveStuNo(findLiveStuNoXML, axios)
   .then((res) => {
     let $ = cheerio.load(res.data, {
       xmlMode: true
@@ -64,7 +64,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) =>{
     console.log(e);
-    requestFunc.makeErrorResponse("생활관 학생 구분 번호 찾기 실패", callback);
+    makeErrorResponse("생활관 학생 구분 번호 찾기 실패", callback);
   });
 
   // 외박 신청 위한 xml 생성
@@ -73,39 +73,34 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   // 신청 횟수 만큼 외박신청 보내기
   // is_weekend -> 평일이 0, 주말이 1
   for (let x = 0 ; x < date_list.length ; x++) {
+
+    let daycheck;
+
     // 평일이면
-    if (is_weekend[x] == 0) {           
-      sendStayOutXML = xmls.makesendStayOutXML(yy, tmGbn, livstuNo, "07", date_list[x], date_list[x], outStayAplyDt);
-
-      await requestFunc.sendStayOut(sendStayOutXML, axios)
-      .then()
-      .catch((e) =>{
-        console.log(e);
-        requestFunc.makeErrorResponse("외박 신청 요청 실패", callback);
-      })
-      
-    } 
+    if (is_weekend[x] == 0)  
+        daycheck = "07";
     // 주말이면
-    else {
-      sendStayOutXML = xmls.makesendStayOutXML(yy, tmGbn, livstuNo, "04", date_list[x], date_list[x], outStayAplyDt);
+    else 
+        daycheck = "04";
 
-      await requestFunc.sendStayOut(sendStayOutXML, axios)
+    sendStayOutXML = makesendStayOutXML(yy, tmGbn, livstuNo, daycheck, date_list[x], date_list[x], outStayAplyDt);
+
+    await sendStayOut(sendStayOutXML, axios)
       .then()
       .catch((e) =>{
         console.log(e);
-        requestFunc.makeErrorResponse("외박 신청 요청 실패", callback);
-      })
-    }
+        makeErrorResponse("외박 신청 요청 실패", callback);
+    })
   }
 
   // 외박 신청 내역 조회하기
-  await requestFunc.findStayOutList(findLiveStuNoXML, axios)
+  await findStayOutList(findLiveStuNoXML, axios)
   .then((res) =>{ 
-    requestFunc.parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
+    parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
   })
   .catch((e) => {
     console.log(e);
-    requestFunc.makeErrorResponse("외박 신청 내역 요청 실패", callback);
+    makeErrorResponse("외박 신청 내역 요청 실패", callback);
   });
 
   const body  = {

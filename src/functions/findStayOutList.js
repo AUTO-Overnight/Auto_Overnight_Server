@@ -1,7 +1,7 @@
 'use strict';
 
-import xmls from "../xmls.js";
-import requestFunc from "../requestFunc.js";
+import { findUserNmXML,  makeFindLiveStuNoXML} from "../xmls.js";
+import { findUserName, findStayOutList, makeErrorResponse} from "../requestFunc.js";
 import cheerio from "cheerio";
 
 export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, callback) {
@@ -17,7 +17,7 @@ export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, 
     /////////////////////////////////////////////////////////////////////////////////////////////////
   
     // 학번 찾기
-    await requestFunc.findUserName(xmls.findUserNmXML, axios)
+    await findUserName(findUserNmXML, axios)
       .then((res) => {
           let $ = cheerio.load(res.data, {
               xmlMode: true
@@ -26,20 +26,20 @@ export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, 
       })
       .catch((e) => {
         console.log(e);
-        requestFunc.makeErrorResponse("학번 찾기 실패", callback);
+        makeErrorResponse("학번 찾기 실패", callback);
       });
     
     // 외박 신청 조회 위한 xml 만들기
-    let findLiveStuNoXML = xmls.makeFindLiveStuNoXML(yy, tmGbn, persNo, userNm);
+    let findLiveStuNoXML = makeFindLiveStuNoXML(yy, tmGbn, persNo, userNm);
     
     // 외박 신청 조회
-    await requestFunc.findStayOutList(findLiveStuNoXML, axios)
+    await findStayOutList(findLiveStuNoXML, axios)
     .then((res) =>{ 
-      requestFunc.parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
+      parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
     })
     .catch((e) => {
       console.log(e);
-      requestFunc.makeErrorResponse("외박 신청 내역 요청 실패", callback);
+      makeErrorResponse("외박 신청 내역 요청 실패", callback);
     });
   
     const body  = {
