@@ -5,9 +5,11 @@ const requestFunc = require("./requestFunc");
 
 export default async function sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt) {
 
-  let outStayFrDt = [];
-  let outStayToDt = [];
-  let outStayStGbn = [];
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  let outStayFrDt = [];  // 외박 신청 시작 날짜
+  let outStayToDt = [];  // 외박 신청 종료 날짜
+  let outStayStGbn = []; // 외박 신청 상태 / 1 -> 미승인 2 -> 승인
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,8 +66,8 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
     requestFunc.makeErrorResponse("생활관 학생 구분 번호 찾기 실패", callback);
   });
 
+  // 외박 신청 위한 xml 생성
   let sendStayOutXML;
-
 
   // 신청 횟수 만큼 외박신청 보내기
   // is_weekend -> 평일이 0, 주말이 1

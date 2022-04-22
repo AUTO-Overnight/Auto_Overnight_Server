@@ -5,6 +5,8 @@ const requestFunc = require("./requestFunc");
 
 export default async function loginFunction(axios, user) {
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
   let yy;               //년도
   let tmGbn;            //학기 구분 [1 : 1학기 / 2 : 2학기 / 5 : 여름학기 / 6 : 겨울학기]
   let userNm;           //학생 이름
@@ -15,9 +17,9 @@ export default async function loginFunction(axios, user) {
   let cookies;          //세션과 쿠키 저장 위한 변수
   let base64encode;     //base64 encode
 
-  let outStayFrDt = [];
-  let outStayToDt = [];
-  let outStayStGbn = [];
+  let outStayFrDt = [];  // 외박 신청 시작 날짜
+  let outStayToDt = [];  // 외박 신청 종료 날짜
+  let outStayStGbn = []; // 외박 신청 상태 / 1 -> 미승인 2 -> 승인
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 

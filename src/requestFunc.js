@@ -30,6 +30,7 @@ function findPointList(findPointListXML, axiosInstance) {
     return axiosInstance.post("https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findFindArdListList.do?menuId=MPB0024&pgmId=PPB0023", findPointListXML)
 }
 
+// 외박 신청 내역 파싱해서 정리
 function parseStayOutList(response, outStayFrDt, outStayToDt, outStayStGbn) {
     let $ = cheerio.load(response.data, {
       xmlMode: true

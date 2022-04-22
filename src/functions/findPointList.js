@@ -4,7 +4,8 @@ const xmls = require("./xmls");
 const requestFunc = require("./requestFunc");
 
 export default async function findPointListFunction(axios, userNm) {
-/////////////////////////////////////////////////////////////////////////////////////////////////
+    
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   let yy;                       // 년도
   let tmGbn;                    // 학기
@@ -86,5 +87,7 @@ export default async function findPointListFunction(axios, userNm) {
     "ardInptDt" : ardInptDt,
     "lifSstArdCtnt" : lifSstArdCtnt
   };
+
+  return body;
 
 }
