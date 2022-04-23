@@ -65,6 +65,7 @@ export function makeErrorResponse(message, errorName, errorMessage, status, call
   });
 }
 
+// 학교 홈페이지 응답 상태 코드 체크
 export function checkStatusCode(code, callback) {
   if (code !== 200) 
     makeErrorResponse("학교 홈페이지 에러", "", "", code, callback);
