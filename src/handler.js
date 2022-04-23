@@ -48,7 +48,7 @@ export const sendStayOut = async (event, context, callback) => {
   const {date_list, is_weekend, outStayAplyDt, cookies} = JSON.parse(event.body);
 
   // 쿠키 설정
-  const cookieJar = cookies;
+  const cookieJar = new CookieJar();
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
@@ -69,7 +69,7 @@ export const findStayOutList = async (event, context, callback) => {
   const {yy, tmGbn, userNm, cookies} = JSON.parse(event.body);
   
   // 쿠키 설정
-  const cookieJar = cookies;
+  const cookieJar = new CookieJar();
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 
@@ -79,6 +79,7 @@ export const findStayOutList = async (event, context, callback) => {
     statusCode: 200,
     body : JSON.stringify(body)
   }
+
 }
 
 // 상벌점 조회 함수
@@ -89,7 +90,7 @@ export const findPointList = async (event, context, callback) => {
   const {userNm, cookies} = JSON.parse(event.body);
 
   // 쿠키 설정
-  const cookieJar = cookies;
+  const cookieJar = new CookieJar();
   axios.defaults.jar = cookieJar;
   axios.defaults.headers["Cookie"] = cookies;
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import { findUserNmXML,  makeFindLiveStuNoXML} from "../xmls.js";
-import { findUserName, findStayOutList, makeErrorResponse} from "../requestFunc.js";
+import { findUserName, findStayOutList, parseStayOutList, makeErrorResponse} from "../requestFunc.js";
 import cheerio from "cheerio";
 
 export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, callback) {
@@ -41,7 +41,7 @@ export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, 
       console.log(e);
       makeErrorResponse("외박 신청 내역 요청 실패", callback);
     });
-  
+    
     const body  = {
       "outStayFrDt" : outStayFrDt,
       "outStayToDt" : outStayToDt,

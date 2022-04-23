@@ -41,7 +41,7 @@ export default async function loginFunction(axios, id, password, callback) {
   // 통정시 로그인, 쿠키 저장하기
   await axios.get(`https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=${base64encode}`)
   .then((res)=>{
-    cookies = res.config.jar;
+    cookies = res.request._headers.cookie;
   })
   .catch((e) => {
     makeErrorResponse("통합 정보 시스템 로그인 실패", callback)
