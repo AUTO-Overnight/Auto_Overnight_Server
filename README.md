@@ -79,7 +79,6 @@
     "date_list" : [20210831, 20210901, 20210902, 20210903, 20210904, 20210905],
     "is_weekend" : [0, 0, 0, 1, 1, 1],
     "outStayAplyDt" : "20210831",
-    "schregNo" : "201112345678",
     "cookies" : "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI= "
 }
 ```
@@ -89,8 +88,6 @@
 * `is_weekend`  0 : 평일 / 1 : 주말
 
 * `outStayAplyDt`  오늘 날짜
-
-* `schregNo`  학번
 
 * `cookies` 로그인하고 얻어온 쿠키 세션
 
