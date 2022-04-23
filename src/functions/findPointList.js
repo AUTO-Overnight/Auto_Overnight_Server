@@ -1,7 +1,7 @@
-'use strict';
-
 import { findUserNmXML, findYYtmgbnXML, makeFindPointListXML } from "../xmls.js";
-import { findUserName, findYYtmgbn, findPointList, makeErrorResponse } from "../requestFunc.js";
+import { findUserName, findYYtmgbn, findPointList, 
+  makeErrorResponse, checkStatusCode } from "../requestFunc.js";
+  
 import cheerio from "cheerio";
 
 export default async function findPointListFunction(axios, userNm, callback) {
@@ -24,6 +24,8 @@ export default async function findPointListFunction(axios, userNm, callback) {
     // 학번 찾기
    await findUserName(findUserNmXML, axios)
     .then((res) => {
+        checkStatusCode(res.status, callback);
+
         let $ = cheerio.load(res.data, {
             xmlMode: true
         });
@@ -31,12 +33,14 @@ export default async function findPointListFunction(axios, userNm, callback) {
     })
     .catch((e) => {
       console.log(e);
-      makeErrorResponse("학번 찾기 실패", e.name, e.message, callback);
+      makeErrorResponse("학번 찾기 실패", e.name, e.message, 404, callback);
     });
 
     // 년도, 학기 찾기
   await findYYtmgbn(findYYtmgbnXML, axios)
   .then((res) => {
+      checkStatusCode(res.status, callback);
+
       let $ = cheerio.load(res.data, {
           xmlMode: true
         });
@@ -46,7 +50,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, callback);
+    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, 404, callback);
   });
   
   // 상벌점 내역 조회 위한 xml 만들기
@@ -55,6 +59,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   // 상벌점 내역 조회 요청
   await findPointList(findPointListXML, axios)
   .then((res) =>{
+    checkStatusCode(res.status, callback);
 
     let $ = cheerio.load(res.data, {
       xmlMode: true
@@ -79,7 +84,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("상벌점 내역 요청 실패", e.name, e.message, callback);
+    makeErrorResponse("상벌점 내역 요청 실패", e.name, e.message, 404, callback);
   })
 
   const body  = {

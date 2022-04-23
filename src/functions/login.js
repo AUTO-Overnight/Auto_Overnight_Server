@@ -1,7 +1,7 @@
-'use strict';
-
 import { findUserNmXML, findYYtmgbnXML, makeFindLiveStuNoXML } from "../xmls.js";
-import { findUserName, findStayOutList, findYYtmgbn, parseStayOutList, makeErrorResponse, } from "../requestFunc.js";
+import { findUserName, findStayOutList, findYYtmgbn, parseStayOutList, 
+  makeErrorResponse, checkStatusCode } from "../requestFunc.js";
+  
 import cheerio from "cheerio";
 
 export default async function loginFunction(axios, id, password, callback) {
@@ -29,10 +29,12 @@ export default async function loginFunction(axios, id, password, callback) {
 
   // 처음 로그인 하기
   await axios.post("https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null", user)
-  .then()
+  .then((res) => {
+    checkStatusCode(res.status, callback);
+  })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("첫 로그인 실패", e.name, e.message, callback);
+    makeErrorResponse("첫 로그인 실패", e.name, e.message, 404, callback);
   });
 
   // 로그인 하기 위한 base64 encode
@@ -41,15 +43,18 @@ export default async function loginFunction(axios, id, password, callback) {
   // 통정시 로그인, 쿠키 저장하기
   await axios.get(`https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=${base64encode}`)
   .then((res)=>{
+    checkStatusCode(res.status, callback);
     cookies = res.request._headers.cookie;
   })
   .catch((e) => {
-    makeErrorResponse("통합 정보 시스템 로그인 실패", e.name, e.message, callback)
+    makeErrorResponse("통합 정보 시스템 로그인 실패", e.name, e.message, 404, callback)
   });
 
   // 학생 이름, 학번 찾기
   await findUserName(findUserNmXML, axios)
   .then((res) => {
+      checkStatusCode(res.status, callback);
+
       let $ = cheerio.load(res.data, {
           xmlMode: true
       });
@@ -57,17 +62,18 @@ export default async function loginFunction(axios, id, password, callback) {
       persNo = $('Col[id="persNo"]').text();
       
       if (userNm == "") {
-         makeErrorResponse("비밀번호가 맞지 않습니다.", "", "", callback);
+         makeErrorResponse("비밀번호가 틀리거나 로그인에 실패했습니다.", "", "", 400, callback);
       }
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("학생 이름 / 학번 찾기 실패", e.name, e.message, callback);
+    makeErrorResponse("학생 이름 / 학번 찾기 실패", e.name, e.message, 404, callback);
   });
 
   // 년도, 학기 찾기
   await findYYtmgbn(findYYtmgbnXML, axios)
   .then((res) => {
+      checkStatusCode(res.status, callback);
       let $ = cheerio.load(res.data, {
           xmlMode: true
       });
@@ -77,7 +83,7 @@ export default async function loginFunction(axios, id, password, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, callback);
+    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, 404, callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
@@ -86,11 +92,12 @@ export default async function loginFunction(axios, id, password, callback) {
   // 외박 신청 내역 조회하기
   await findStayOutList(findLiveStuNoXML, axios)
   .then((res) =>{ 
+    checkStatusCode(res.status, callback);
     parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, callback);
+    makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, 404, callback);
   });
 
   const body  = {

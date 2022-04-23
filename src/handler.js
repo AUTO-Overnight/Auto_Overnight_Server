@@ -1,5 +1,3 @@
-'use strict';
-
 import loginFunction from "./functions/login.js";
 import sendStayOutFunction from "./functions/sendStayOut.js";
 import findStayOutListFunction from "./functions/findStayOutList.js";

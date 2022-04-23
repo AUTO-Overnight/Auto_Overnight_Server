@@ -1,7 +1,7 @@
-'use strict';
-
 import { findUserNmXML, findYYtmgbnXML, makeFindLiveStuNoXML, makesendStayOutXML }  from "../xmls.js";
-import { findUserName, findYYtmgbn, findLiveStuNo, sendStayOut , findStayOutList, parseStayOutList, makeErrorResponse } from "../requestFunc.js";
+import { findUserName, findYYtmgbn, findLiveStuNo, sendStayOut, 
+  findStayOutList, parseStayOutList, makeErrorResponse, checkStatusCode } from "../requestFunc.js";
+  
 import cheerio from "cheerio";
 
 export default async function sendStayOutFunction(axios, date_list, is_weekend, outStayAplyDt, callback) {
@@ -25,6 +25,8 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   // 학생 이름 찾기
   await findUserName(findUserNmXML, axios)
   .then((res) => {
+      checkStatusCode(res.status, callback);
+
       let $ = cheerio.load(res.data, {
           xmlMode: true
       });
@@ -33,12 +35,14 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("학생 이름 찾기 실패", e.name, e.message, callback);
+    makeErrorResponse("학생 이름 찾기 실패", e.name, e.message, 404, callback);
   });
 
   // 년도, 학기 찾기
   await findYYtmgbn(findYYtmgbnXML, axios)
   .then((res) => {
+      checkStatusCode(res.status, callback);
+
       let $ = cheerio.load(res.data, {
           xmlMode: true
         });
@@ -48,15 +52,17 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, callback);
+    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, 404, callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
-  let findLiveStuNoXML = makeFindLiveStuNoXML(yy, tmGbn, persNo , userNm);
+  let findLiveStuNoXML = makeFindLiveStuNoXML(yy, tmGbn, persNo, userNm);
 
   // 생활관 거주 학생 구분 번호 찾기
   await findLiveStuNo(findLiveStuNoXML, axios)
   .then((res) => {
+    checkStatusCode(res.status, callback);
+
     let $ = cheerio.load(res.data, {
       xmlMode: true
     });
@@ -64,7 +70,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("생활관 학생 구분 번호 찾기 실패", e.name, e.message, callback);
+    makeErrorResponse("생활관 학생 구분 번호 찾기 실패", e.name, e.message, 404, callback);
   });
 
   // 외박 신청 위한 xml 생성
@@ -86,21 +92,24 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
     sendStayOutXML = makesendStayOutXML(yy, tmGbn, livstuNo, daycheck, date_list[x], date_list[x], outStayAplyDt);
 
     await sendStayOut(sendStayOutXML, axios)
-      .then()
+      .then((res) =>{
+        checkStatusCode(res.status, callback);
+      })
       .catch((e) =>{
         console.log(e);
-        makeErrorResponse("외박 신청 요청 실패", e.name, e.message, callback);
+        makeErrorResponse("외박 신청 요청 실패", e.name, e.message, 404, callback);
     })
   }
 
   // 외박 신청 내역 조회하기
   await findStayOutList(findLiveStuNoXML, axios)
   .then((res) =>{ 
+    checkStatusCode(res.status, callback);
     parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, callback);
+    makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, 404, callback);
   });
 
   const body  = {

@@ -1,7 +1,7 @@
-'use strict';
-
 import { findUserNmXML,  makeFindLiveStuNoXML} from "../xmls.js";
-import { findUserName, findStayOutList, makeErrorResponse} from "../requestFunc.js";
+import { findUserName, findStayOutList, makeErrorResponse, 
+    parseStayOutList, checkStatusCode } from "../requestFunc.js";
+    
 import cheerio from "cheerio";
 
 export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, callback) {
@@ -19,6 +19,8 @@ export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, 
     // 학번 찾기
     await findUserName(findUserNmXML, axios)
       .then((res) => {
+          checkStatusCode(res.status, callback);
+
           let $ = cheerio.load(res.data, {
               xmlMode: true
           });
@@ -26,7 +28,7 @@ export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, 
       })
       .catch((e) => {
         console.log(e);
-        makeErrorResponse("학번 찾기 실패 ", e.name, e.message, callback);
+        makeErrorResponse("학번 찾기 실패 ", e.name, e.message, 404, callback);
       });
     
     // 외박 신청 조회 위한 xml 만들기
@@ -35,11 +37,12 @@ export default async function findStayOutListFunction(axios, yy, tmGbn, userNm, 
     // 외박 신청 조회
     await findStayOutList(findLiveStuNoXML, axios)
     .then((res) =>{ 
+      checkStatusCode(res.status, callback);
       parseStayOutList(res, outStayFrDt, outStayToDt, outStayStGbn);
     })
     .catch((e) => {
       console.log(e);
-      makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, callback);
+      makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, 404, callback);
     });
     
     const body  = {

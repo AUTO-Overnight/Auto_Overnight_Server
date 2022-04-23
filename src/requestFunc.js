@@ -51,7 +51,7 @@ export function parseStayOutList(response, outStayFrDt, outStayToDt, outStayStGb
 }
 
 // 에러 메세지 출력
-export function makeErrorResponse(message, errorName, errorMessage, callback) {
+export function makeErrorResponse(message, errorName, errorMessage, status, callback) {
   const body = {
     message,
     "errorname": errorName,
@@ -59,8 +59,13 @@ export function makeErrorResponse(message, errorName, errorMessage, callback) {
   };
   
   callback(null, {
-    statusCode : 404,
+    statusCode : status,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+}
+
+export function checkStatusCode(code, callback) {
+  if (code !== 200) 
+    makeErrorResponse("학교 홈페이지 에러", "", "", code, callback);
 }
