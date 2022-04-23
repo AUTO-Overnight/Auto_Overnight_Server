@@ -22,7 +22,7 @@ frameworkVersion: '2'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: dev
   region: ap-northeast-2
   lambdaHashingVersion: 20201221
@@ -65,7 +65,7 @@ functions:
     events:
       - http:
           path: login
-          method: post 
+          method: post
   sendStayOut:
     handler: src/handler.sendStayOut
     events:
@@ -77,7 +77,7 @@ functions:
     events:
       - http:
           path: findstayoutlist
-          method: post 
+          method: post
   findPointList:
     handler: src/handler.findPointList
     events:

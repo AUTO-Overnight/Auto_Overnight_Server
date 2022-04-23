@@ -1,4 +1,4 @@
-const findUserNmXML = `<?xml version="1.0" encoding="UTF-8"?> 
+export const findUserNmXML = `<?xml version="1.0" encoding="UTF-8"?> 
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="columnList">persNo|userNm</Parameter>
@@ -6,7 +6,7 @@ const findUserNmXML = `<?xml version="1.0" encoding="UTF-8"?>
 	</Parameters>
 </Root>`;
 
-const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
+export const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -24,7 +24,7 @@ const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
 	</Dataset>
 </Root>`;
 
-function makeFindLiveStuNoXML(yy, tmGbn, schregNo, userNm) {
+export function makeFindLiveStuNoXML(yy, tmGbn, schregNo, userNm) {
     return `<?xml version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
@@ -53,7 +53,7 @@ function makeFindLiveStuNoXML(yy, tmGbn, schregNo, userNm) {
     </Root>`;
 }
 
-function makesendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt) {
+export function makesendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt) {
     // outStayStGbn [1 : 미승인 2 : 승인]
     // 승인되면 지울 수 가 없어서 리퀘스트 안보내봄
     return `<?xml version="1.0" encoding="UTF-8"?>
@@ -97,7 +97,7 @@ function makesendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outSta
     </Root>`;
 }
 
-function makeFindPointListXML(yy, tmGbn, schregNo, userNm) {
+export function makeFindPointListXML(yy, tmGbn, schregNo, userNm) {
     return `<?xml version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
@@ -122,9 +122,3 @@ function makeFindPointListXML(yy, tmGbn, schregNo, userNm) {
         </Dataset>
     </Root>`
 }
-
-exports.findUserNmXML = findUserNmXML;
-exports.findYYtmgbnXML = findYYtmgbnXML;
-exports.makeFindLiveStuNoXML = makeFindLiveStuNoXML;
-exports.makesendStayOutXML = makesendStayOutXML;
-exports.makeFindPointListXML = makeFindPointListXML;

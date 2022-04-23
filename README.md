@@ -152,7 +152,6 @@
 {
     "yy" : "2021",
     "tmGbn" : "2",
-    "schregNo" : "201112345678",
     "userNm" : "홍길동",
     "cookies" : "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI="
 }
@@ -161,8 +160,6 @@
 * `yy`  년도
 
 * `tmGbn`  학기 구분 / 1학기 : 1 / 2학기 : 2 / 여름학기 : 5 / 겨울학기 : 6
-
-* `schregNo` 학번
 
 * `userNm` 이름
 
@@ -204,13 +201,10 @@
 
 ```
 {
-    "schregNo" : "201112345678",
     "userNm" : "홍길동",
     "cookies" : "_SSO_Global_Logout_url=get%5 ... amV1c19kb21haW4vanN2XzI="
 }
 ```
-
-* `schregNo` 학번
 
 * `userNm` 이름
 
