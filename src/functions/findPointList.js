@@ -31,7 +31,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
     })
     .catch((e) => {
       console.log(e);
-      makeErrorResponse("학번 찾기 실패", callback);
+      makeErrorResponse("학번 찾기 실패", e.name, e.message, callback);
     });
 
     // 년도, 학기 찾기
@@ -46,7 +46,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("년도, 학기 찾기 실패", callback);
+    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, callback);
   });
   
   // 상벌점 내역 조회 위한 xml 만들기
@@ -79,7 +79,7 @@ export default async function findPointListFunction(axios, userNm, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("상벌점 내역 요청 실패", callback);
+    makeErrorResponse("상벌점 내역 요청 실패", e.name, e.message, callback);
   })
 
   const body  = {

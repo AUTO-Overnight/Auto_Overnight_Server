@@ -51,6 +51,16 @@ export function parseStayOutList(response, outStayFrDt, outStayToDt, outStayStGb
 }
 
 // 에러 메세지 출력
-export function makeErrorResponse(message, callback) {
-    callback(null, { statusCode: 404, body: message, headers: { 'Content-Type': 'text/plain' } });
+export function makeErrorResponse(message, errorName, errorMessage, callback) {
+  const body = {
+    message,
+    "errorname": errorName,
+    "errormessage": errorMessage
+  };
+  
+  callback(null, {
+    statusCode : 404,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
 }

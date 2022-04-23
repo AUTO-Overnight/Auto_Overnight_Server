@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: test-auto-overnight
+service: auto-overnight
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -23,7 +23,7 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: test
+  stage: dev
   region: ap-northeast-2
   lambdaHashingVersion: 20201221
 

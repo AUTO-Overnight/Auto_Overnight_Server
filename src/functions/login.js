@@ -32,7 +32,7 @@ export default async function loginFunction(axios, id, password, callback) {
   .then()
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("첫 로그인 실패", callback);
+    makeErrorResponse("첫 로그인 실패", e.name, e.message, callback);
   });
 
   // 로그인 하기 위한 base64 encode
@@ -44,7 +44,7 @@ export default async function loginFunction(axios, id, password, callback) {
     cookies = res.request._headers.cookie;
   })
   .catch((e) => {
-    makeErrorResponse("통합 정보 시스템 로그인 실패", callback)
+    makeErrorResponse("통합 정보 시스템 로그인 실패", e.name, e.message, callback)
   });
 
   // 학생 이름, 학번 찾기
@@ -57,12 +57,12 @@ export default async function loginFunction(axios, id, password, callback) {
       persNo = $('Col[id="persNo"]').text();
       
       if (userNm == "") {
-         makeErrorResponse("비밀번호가 맞지 않습니다.", callback);
+         makeErrorResponse("비밀번호가 맞지 않습니다.", "", "", callback);
       }
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("학생 이름 / 학번 찾기 실패", callback);
+    makeErrorResponse("학생 이름 / 학번 찾기 실패", e.name, e.message, callback);
   });
 
   // 년도, 학기 찾기
@@ -77,7 +77,7 @@ export default async function loginFunction(axios, id, password, callback) {
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("년도, 학기 찾기 실패", callback);
+    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
@@ -90,7 +90,7 @@ export default async function loginFunction(axios, id, password, callback) {
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("외박 신청 내역 요청 실패", callback);
+    makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, callback);
   });
 
   const body  = {

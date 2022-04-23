@@ -33,7 +33,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("학생 이름 찾기 실패", callback);
+    makeErrorResponse("학생 이름 찾기 실패", e.name, e.message, callback);
   });
 
   // 년도, 학기 찾기
@@ -48,7 +48,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("년도, 학기 찾기 실패", callback);
+    makeErrorResponse("년도, 학기 찾기 실패", e.name, e.message, callback);
   });
 
   // 생활관 거주 학생 구분 번호 찾기 위한 xml 만들기 => 외박 신청 내역 조회 때 사용하는 xml과 같음
@@ -64,7 +64,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) =>{
     console.log(e);
-    makeErrorResponse("생활관 학생 구분 번호 찾기 실패", callback);
+    makeErrorResponse("생활관 학생 구분 번호 찾기 실패", e.name, e.message, callback);
   });
 
   // 외박 신청 위한 xml 생성
@@ -89,7 +89,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
       .then()
       .catch((e) =>{
         console.log(e);
-        makeErrorResponse("외박 신청 요청 실패", callback);
+        makeErrorResponse("외박 신청 요청 실패", e.name, e.message, callback);
     })
   }
 
@@ -100,7 +100,7 @@ export default async function sendStayOutFunction(axios, date_list, is_weekend, 
   })
   .catch((e) => {
     console.log(e);
-    makeErrorResponse("외박 신청 내역 요청 실패", callback);
+    makeErrorResponse("외박 신청 내역 요청 실패", e.name, e.message, callback);
   });
 
   const body  = {
