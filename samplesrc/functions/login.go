@@ -4,10 +4,7 @@ import (
 	"auto_overnight_api/xmls"
 	"bytes"
 	"encoding/json"
-	"encoding/xml"
-	"fmt"
 	"github.com/aws/aws-lambda-go/events"
-	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -71,49 +68,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
 
-	findLiveStuNoXML := []byte(fmt.Sprintf(`<?xmls version="1.0" encoding="UTF-8"?>
-    <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
-        <Parameters>
-            <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
-            <Parameter id="requestTimeStr">1626877490927</Parameter>
-        </Parameters>
-        <Dataset id="DS_COND">
-            <ColumnInfo>
-                <Column id="yy" type="STRING" size="256"  />
-                <Column id="tmGbn" type="STRING" size="256"  />
-                <Column id="schregNo" type="STRING" size="256"  />
-                <Column id="stdKorNm" type="STRING" size="256"  />
-                <Column id="outStayStGbn" type="STRING" size="256"  />
-            </ColumnInfo>
-            <Rows>
-                <Row type="update">
-                    <Col id="yy">%s</Col>
-                    <Col id="tmGbn">%s</Col>
-                    <Col id="schregNo">%s</Col>
-                    <Col id="stdKorNm">%s</Col>
-                    <OrgRow>
-                    </OrgRow>
-                </Row>
-            </Rows>
-        </Dataset>
-    </Root>`,
-		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
-		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data))
-
-	req, err = http.NewRequest("POST", "https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findStayAplyList.do?menuId=MPB0022&pgmId=PPB0021", bytes.NewBuffer(findLiveStuNoXML))
-	if err != nil {
-		panic(err)
-	}
-
-	res, err = client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	body, _ := ioutil.ReadAll(res.Body)
-	var temp xmls.Root
-	xml.Unmarshal(body, &temp)
+	stayOutList := xmls.FindStayOut(client, studentInfo, yytmGbnInfo)
 
 	responseBody := make(map[string]interface{})
 	responseBody["name"] = studentInfo.Dataset[0].Rows.Row[0].Col[0].Data
@@ -122,15 +77,15 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 
 	cookies := make(map[string]string)
 
-	outStayFrDt := make([]string, len(temp.Dataset[1].Rows.Row))
-	outStayToDt := make([]string, len(temp.Dataset[1].Rows.Row))
-	outStayStGbn := make([]string, len(temp.Dataset[1].Rows.Row))
+	outStayFrDt := make([]string, len(stayOutList.Dataset[1].Rows.Row))
+	outStayToDt := make([]string, len(stayOutList.Dataset[1].Rows.Row))
+	outStayStGbn := make([]string, len(stayOutList.Dataset[1].Rows.Row))
 
 	var wg sync.WaitGroup
-	wg.Add(len(temp.Dataset[1].Rows.Row) + 3)
+	wg.Add(len(stayOutList.Dataset[1].Rows.Row) + 3)
 
 	go func() {
-		for i, v := range temp.Dataset[1].Rows.Row[:len(temp.Dataset[1].Rows.Row)/2] {
+		for i, v := range stayOutList.Dataset[1].Rows.Row[:len(stayOutList.Dataset[1].Rows.Row)/2] {
 			go func(i int, v xmls.Row) {
 				outStayFrDt[i] = v.Col[2].Data
 				outStayToDt[i] = v.Col[1].Data
@@ -141,8 +96,8 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		wg.Done()
 	}()
 	go func() {
-		for i, v := range temp.Dataset[1].Rows.Row[len(temp.Dataset[1].Rows.Row)/2:] {
-			i += len(temp.Dataset[1].Rows.Row) / 2
+		for i, v := range stayOutList.Dataset[1].Rows.Row[len(stayOutList.Dataset[1].Rows.Row)/2:] {
+			i += len(stayOutList.Dataset[1].Rows.Row) / 2
 			go func(i int, v xmls.Row) {
 				outStayFrDt[i] = v.Col[2].Data
 				outStayToDt[i] = v.Col[1].Data
@@ -170,6 +125,5 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		StatusCode: 200,
 		Body:       string(responseJson),
 	}
-	fmt.Println(string(responseJson))
 	return response, nil
 }
