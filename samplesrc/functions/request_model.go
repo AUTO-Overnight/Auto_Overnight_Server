@@ -11,3 +11,10 @@ type FindRequestModel struct {
 	UserNm  string            `json:"userNm"`
 	Cookies map[string]string `json:"cookies"`
 }
+
+type SendRequestModel struct {
+	DateList      []string          `json:"date_list"`
+	IsWeekend     []string          `json:"is_weekend"`
+	OutStayAplyDt string            `json:"outStayAplyDt"`
+	Cookies       map[string]string `json:"cookies"`
+}
