@@ -26,15 +26,17 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	}
 
 	findUserNmChan := make(chan xmls.Root)
-	findYYtmgbnChan := make(chan xmls.Root)
 
 	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
-	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, requestsModel.Cookies)
-
 	studentInfo := <-findUserNmChan
-	yytmGbnInfo := <-findYYtmgbnChan
 
-	stayOutList := xmls.RequestFindStayOutList(client, studentInfo, yytmGbnInfo, requestsModel.Cookies)
+	stayOutList, _ := xmls.RequestFindStayOutList(
+		client,
+		requestsModel.Year,
+		requestsModel.TmGbn,
+		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
+		nil)
 
 	responseBody := make(map[string]interface{})
 

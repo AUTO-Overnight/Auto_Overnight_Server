@@ -17,6 +17,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
+
 	loginInfo := url.Values{
 		"internalId": {requestsModel.Id},
 		"internalPw": {requestsModel.PassWord},
@@ -63,7 +64,13 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
 
-	stayOutList := xmls.RequestFindStayOutList(client, studentInfo, yytmGbnInfo, nil)
+	stayOutList, req := xmls.RequestFindStayOutList(
+		client,
+		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
+		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
+		nil)
 
 	responseBody := make(map[string]interface{})
 	responseBody["name"] = studentInfo.Dataset[0].Rows.Row[0].Col[0].Data
@@ -102,6 +109,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		}
 		wg.Done()
 	}()
+
 	go func() {
 		for _, info := range req.Cookies() {
 			cookies[info.Name] = info.Value

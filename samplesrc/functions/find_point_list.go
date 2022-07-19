@@ -25,15 +25,18 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	findUserNmChan := make(chan xmls.Root)
-	findYYtmgbnChan := make(chan xmls.Root)
 
 	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
-	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, requestsModel.Cookies)
 
 	studentInfo := <-findUserNmChan
-	yytmGbnInfo := <-findYYtmgbnChan
 
-	pointList := xmls.RequestFindPointList(client, studentInfo, yytmGbnInfo, requestsModel.Cookies)
+	pointList := xmls.RequestFindPointList(
+		client,
+		requestsModel.Year,
+		requestsModel.TmGbn,
+		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
+		requestsModel.Cookies)
 
 	responseBody := make(map[string]interface{})
 

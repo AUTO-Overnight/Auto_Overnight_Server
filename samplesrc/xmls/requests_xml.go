@@ -30,7 +30,7 @@ var (
 			</Root>`)
 )
 
-func MakefindLiveStuNoXML(studentInfo, yytmGbnInfo Root) []byte {
+func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
 	return []byte(fmt.Sprintf(`<?xmls version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
@@ -57,8 +57,56 @@ func MakefindLiveStuNoXML(studentInfo, yytmGbnInfo Root) []byte {
             </Rows>
         </Dataset>
     </Root>`,
-		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
-		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data))
+		yy, tmGbn, schregNo, stdKorNm))
+}
+
+func MakeSendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt string) []byte {
+	return []byte(fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+    <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
+        <Parameters>
+            <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
+            <Parameter id="requestTimeStr">1626795331154</Parameter>
+        </Parameters>
+        <Dataset id="DS_DORM120">
+            <ColumnInfo>
+                <Column id="chk" type="STRING" size="256"  />
+                <Column id="yy" type="STRING" size="256"  />
+                <Column id="tmGbn" type="STRING" size="256"  />
+                <Column id="livstuNo" type="STRING" size="256"  />
+                <Column id="outStaySeq" type="STRING" size="256"  />
+                <Column id="outStayGbn" type="STRING" size="256"  />
+                <Column id="outStayFrDt" type="STRING" size="256"  />
+                <Column id="outStayToDt" type="STRING" size="256"  />
+                <Column id="outStayStGbn" type="STRING" size="256"  />
+                <Column id="outStayStNm" type="STRING" size="256"  />
+                <Column id="outStayAplyDt" type="STRING" size="256"  />
+                <Column id="outStayReplyCtnt" type="STRING" size="256"  />
+                <Column id="schregNo" type="STRING" size="256"  />
+                <Column id="hldyYn" type="STRING" size="256"  />
+                <Column id="resprHldyYn" type="STRING" size="256"  />
+            </ColumnInfo>
+            <Rows>
+                <Row type="insert">
+                    <Col id="yy">%s</Col>
+                    <Col id="tmGbn">%s</Col>
+                    <Col id="livstuNo">%s</Col>         
+                    <Col id="outStayGbn">%s</Col>       
+                    <Col id="outStayFrDt">%s</Col> 
+                    <Col id="outStayToDt">%s</Col> 
+                    <Col id="outStayStGbn">1</Col>     
+                    <Col id="outStayStNm">미승인</Col>
+                    <Col id="outStayAplyDt">%s</Col>
+                </Row>
+            </Rows>
+        </Dataset>
+    </Root>`,
+		yy,
+		tmGbn,
+		livstuNo,
+		outStayGbn,
+		outStayFrDt,
+		outStayToDt,
+		outStayAplyDt,
+	))
+
 }
