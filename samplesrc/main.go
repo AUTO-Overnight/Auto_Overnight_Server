@@ -13,7 +13,7 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	switch request.Path {
 	case "/login":
 		response, err = functions.Login(request)
-	case "/sendstayou":
+	case "/sendstayout":
 		response, err = functions.SendStayOut(request)
 	case "/findstayoutlist":
 		response, err = functions.FindStayOutList(request)
