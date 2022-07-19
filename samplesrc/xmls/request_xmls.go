@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func FindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root) {
+func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root, cookies map[string]string) {
 	findYYtmgbnXML := []byte(`<?xmls version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
@@ -32,6 +32,12 @@ func FindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root) {
 		panic(err)
 	}
 
+	if cookies != nil {
+		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
+		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
+		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
+	}
+
 	res, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -44,7 +50,7 @@ func FindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root) {
 	findYYtmgbnChan <- yytmGbnInfo
 }
 
-func FindUserNm(client *http.Client, findUserNmChan chan Root) {
+func RequestFindUserNm(client *http.Client, findUserNmChan chan Root, cookies map[string]string) {
 	findUserNmXML := []byte(
 		`<?xmls version="1.0" encoding="UTF-8"?>
 			<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
@@ -58,6 +64,13 @@ func FindUserNm(client *http.Client, findUserNmChan chan Root) {
 	if err != nil {
 		panic(err)
 	}
+
+	if cookies != nil {
+		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
+		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
+		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
+	}
+
 	res, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -70,7 +83,7 @@ func FindUserNm(client *http.Client, findUserNmChan chan Root) {
 	findUserNmChan <- studentInfo
 }
 
-func FindStayOut(client *http.Client, studentInfo, yytmGbnInfo Root) Root {
+func RequestFindStayOutList(client *http.Client, studentInfo, yytmGbnInfo Root, cookies map[string]string) Root {
 	findLiveStuNoXML := []byte(fmt.Sprintf(`<?xmls version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
@@ -107,6 +120,12 @@ func FindStayOut(client *http.Client, studentInfo, yytmGbnInfo Root) Root {
 		panic(err)
 	}
 
+	if cookies != nil {
+		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
+		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
+		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
+	}
+
 	res, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -119,4 +138,8 @@ func FindStayOut(client *http.Client, studentInfo, yytmGbnInfo Root) Root {
 	}
 
 	return temp
+}
+
+func RequestFindPointList() {
+
 }
