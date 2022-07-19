@@ -57,13 +57,13 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	findUserNmChan := make(chan xmls.Root)
 	findYYtmgbnChan := make(chan xmls.Root)
 
-	go xmls.FindUserNm(client, findUserNmChan)
-	go xmls.FindYYtmgbn(client, findYYtmgbnChan)
+	go xmls.RequestFindUserNm(client, findUserNmChan, nil)
+	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, nil)
 
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
 
-	stayOutList := xmls.FindStayOut(client, studentInfo, yytmGbnInfo)
+	stayOutList := xmls.RequestFindStayOutList(client, studentInfo, yytmGbnInfo, nil)
 
 	responseBody := make(map[string]interface{})
 	responseBody["name"] = studentInfo.Dataset[0].Rows.Row[0].Col[0].Data
