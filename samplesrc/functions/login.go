@@ -11,13 +11,8 @@ import (
 	"sync"
 )
 
-type RequestModel struct {
-	Id       string `json:"id"`
-	PassWord string `json:"password"`
-}
-
 func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var requestsModel RequestModel
+	var requestsModel LoginRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
