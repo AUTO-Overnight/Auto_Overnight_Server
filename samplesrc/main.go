@@ -1,6 +1,7 @@
 package main
 
 import (
+	"auto_overnight_api/xmls"
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
@@ -14,45 +15,13 @@ import (
 	"sync"
 )
 
-type Root struct {
-	XMLName    xml.Name   `xml:"Root"`
-	Parameters Parameters `xml:"Parameters"`
-	Dataset    []Dataset  `xml:"Dataset"`
-}
-
-type Parameters struct {
-	Parameter string `xml:"Parameter"`
-}
-
-type Dataset struct {
-	ColumnInfo ColumnInfo `xml:"ColumnInfo"`
-	Rows       Rows       `xml:"Rows"`
-}
-
-type ColumnInfo struct {
-	Column []string `xml:"Column"`
-}
-
-type Rows struct {
-	Row []Row `xml:"Row"`
-}
-
-type Row struct {
-	Col []Col `xml:"Col"`
-}
-
-type Col struct {
-	Id   string `xml:"id,attr"`
-	Data string `xml:",chardata"`
-}
-
 type RequestModel struct {
 	Id       string `json:"id"`
 	PassWord string `json:"password"`
 }
 
-func FindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root) {
-	findYYtmgbnXML := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+func FindYYtmgbn(client *http.Client, findYYtmgbnChan chan xmls.Root) {
+	findYYtmgbnXML := []byte(`<?xmls version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -81,15 +50,15 @@ func FindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root) {
 	}
 
 	body, _ := ioutil.ReadAll(res.Body)
-	var yytmGbnInfo Root
+	var yytmGbnInfo xmls.Root
 	xml.Unmarshal(body, &yytmGbnInfo)
 
 	findYYtmgbnChan <- yytmGbnInfo
 }
 
-func FindUserNm(client *http.Client, findUserNmChan chan Root) {
+func FindUserNm(client *http.Client, findUserNmChan chan xmls.Root) {
 	findUserNmXML := []byte(
-		`<?xml version="1.0" encoding="UTF-8"?>
+		`<?xmls version="1.0" encoding="UTF-8"?>
 			<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 				<Parameters>
 					<Parameter id="columnList">persNo|userNm</Parameter>
@@ -107,13 +76,13 @@ func FindUserNm(client *http.Client, findUserNmChan chan Root) {
 	}
 
 	body, _ := ioutil.ReadAll(res.Body)
-	var studentInfo Root
+	var studentInfo xmls.Root
 	xml.Unmarshal(body, &studentInfo)
 
 	findUserNmChan <- studentInfo
 }
 
-func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var requestsModel RequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
@@ -156,8 +125,8 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	if err != nil {
 		panic(err)
 	}
-	findUserNmChan := make(chan Root)
-	findYYtmgbnChan := make(chan Root)
+	findUserNmChan := make(chan xmls.Root)
+	findYYtmgbnChan := make(chan xmls.Root)
 
 	go FindUserNm(client, findUserNmChan)
 	go FindYYtmgbn(client, findYYtmgbnChan)
@@ -165,7 +134,7 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
 
-	findLiveStuNoXML := []byte(fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+	findLiveStuNoXML := []byte(fmt.Sprintf(`<?xmls version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
             <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -206,7 +175,7 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		panic(err)
 	}
 	body, _ := ioutil.ReadAll(res.Body)
-	var temp Root
+	var temp xmls.Root
 	xml.Unmarshal(body, &temp)
 
 	responseBody := make(map[string]interface{})
@@ -225,7 +194,7 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 
 	go func() {
 		for i, v := range temp.Dataset[1].Rows.Row[:len(temp.Dataset[1].Rows.Row)/2] {
-			go func(i int, v Row) {
+			go func(i int, v xmls.Row) {
 				outStayFrDt[i] = v.Col[2].Data
 				outStayToDt[i] = v.Col[1].Data
 				outStayStGbn[i] = v.Col[0].Data
@@ -237,7 +206,7 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	go func() {
 		for i, v := range temp.Dataset[1].Rows.Row[len(temp.Dataset[1].Rows.Row)/2:] {
 			i += len(temp.Dataset[1].Rows.Row) / 2
-			go func(i int, v Row) {
+			go func(i int, v xmls.Row) {
 				outStayFrDt[i] = v.Col[2].Data
 				outStayToDt[i] = v.Col[1].Data
 				outStayStGbn[i] = v.Col[0].Data
@@ -264,7 +233,22 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		StatusCode: 200,
 		Body:       string(responseJson),
 	}
+	fmt.Println(string(responseJson))
 	return response, nil
+}
+
+func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	var response events.APIGatewayProxyResponse
+	var err error
+
+	switch request.Path {
+	case "/login":
+		response, err = login(request)
+	case "/sendstayout":
+	case "/findstayoutlist":
+	case "/findpointlist":
+	}
+	return response, err
 }
 
 func main() {
