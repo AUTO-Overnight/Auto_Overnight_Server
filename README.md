@@ -7,7 +7,7 @@
 `GOARCH=amd64 GOOS=linux go build` 후에 생긴 바이너리파일을 zip로 압축해 aws lambda에 업로드합니다
 
 
-## 📝 API
+## API
 
 - 모든 요청은 POST를 사용합니다.
 
