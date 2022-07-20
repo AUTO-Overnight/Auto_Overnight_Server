@@ -36,7 +36,7 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 		requestsModel.TmGbn,
 		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
 		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
-		nil)
+		requestsModel.Cookies)
 
 	responseBody := make(map[string]interface{})
 
@@ -45,7 +45,7 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	outStayStGbn := make([]string, len(stayOutList.Dataset[1].Rows.Row))
 
 	var wg sync.WaitGroup
-	wg.Add(len(stayOutList.Dataset[1].Rows.Row))
+	wg.Add(len(stayOutList.Dataset[1].Rows.Row) + 2)
 
 	go func() {
 		for i, v := range stayOutList.Dataset[1].Rows.Row[:len(stayOutList.Dataset[1].Rows.Row)/2] {
