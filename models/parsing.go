@@ -14,13 +14,7 @@ func ParsingStayoutList(stayOutList Root, outStayFrDtChan, outStayToDtChan, outS
 	outStayStGbn := make([]string, len(stayOutList.Dataset[1].Rows.Row))
 
 	var wg sync.WaitGroup
-	if len(stayOutList.Dataset[1].Rows.Row) > 0 {
-		wg.Add(len(stayOutList.Dataset[1].Rows.Row))
-	} else {
-		outStayFrDtChan <- outStayFrDt
-		outStayToDtChan <- outStayToDt
-		outStayStGbnChan <- outStayStGbn
-	}
+	wg.Add(len(stayOutList.Dataset[1].Rows.Row))
 
 	// 파싱 시작
 	for i, v := range stayOutList.Dataset[1].Rows.Row {
@@ -62,14 +56,7 @@ func ParsingPointList(pointList Root, cmpScrChan, lifSstArdGbnChan, ardInptDtCha
 	lifSstArdCtnt := make([]string, len(pointList.Dataset[0].Rows.Row))
 
 	var wg sync.WaitGroup
-	if len(pointList.Dataset[0].Rows.Row) > 0 {
-		wg.Add(len(pointList.Dataset[0].Rows.Row))
-	} else {
-		cmpScrChan <- cmpScr
-		lifSstArdGbnChan <- lifSstArdGbn
-		ardInptDtChan <- ardInptDt
-		lifSstArdCtntChan <- lifSstArdCtnt
-	}
+	wg.Add(len(pointList.Dataset[0].Rows.Row))
 
 	// 파싱 시작
 	for i, v := range pointList.Dataset[0].Rows.Row {
