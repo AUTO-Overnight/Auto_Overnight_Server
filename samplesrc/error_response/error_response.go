@@ -5,10 +5,9 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func MakeErrorResponse(err error, statusCode int, comment string) (events.APIGatewayProxyResponse, error) {
+func MakeErrorResponse(err error, statusCode int) (events.APIGatewayProxyResponse, error) {
 	body := make(map[string]string)
 	body["error"] = err.Error()
-	body["comment"] = comment
 
 	responseJson, _ := json.Marshal(body)
 	response := events.APIGatewayProxyResponse{
