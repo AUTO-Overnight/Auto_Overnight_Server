@@ -3,6 +3,10 @@
 - 외박 신청 및 로그인 등 여러 요청을 처리하는 API입니다.
 - nodejs -> golang으로 변경하여 AWS lambda에 배포중입니다.
 
+## Build
+`GOARCH=amd64 GOOS=linux go build` 후에 생긴 바이너리파일을 zip로 압축해 aws lambda에 업로드합니다
+
+
 ## 📝 API
 
 - 모든 요청은 POST를 사용합니다.
