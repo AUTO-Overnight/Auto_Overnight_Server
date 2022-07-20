@@ -1,12 +1,10 @@
-export const findUserNmXML = `<?xml version="1.0" encoding="UTF-8"?> 
-<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
-	<Parameters>
-		<Parameter id="columnList">persNo|userNm</Parameter>
-		<Parameter id="requestTimeStr">1627027228674</Parameter>
-	</Parameters>
-</Root>`;
+package models
 
-export const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
+import "fmt"
+
+var (
+	// FindYYtmgbnXML 년도, 학기 찾기 위한 XML
+	FindYYtmgbnXML = []byte(`<?models version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -22,10 +20,21 @@ export const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
 			</Row>
 		</Rows>
 	</Dataset>
-</Root>`;
+</Root>`)
+	// FindUserNmXML 이름, 학번 찾기 위한 XML
+	FindUserNmXML = []byte(
+		`<?models version="1.0" encoding="UTF-8"?>
+			<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
+				<Parameters>
+					<Parameter id="columnList">persNo|userNm</Parameter>
+					<Parameter id="requestTimeStr">1627027228674</Parameter>
+				</Parameters>
+			</Root>`)
+)
 
-export function makeFindLiveStuNoXML(yy, tmGbn, schregNo, userNm) {
-    return `<?xml version="1.0" encoding="UTF-8"?>
+// MakefindLiveStuNoXML LiveStuNo 찾기 위한 XML 만드는 함수
+func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
+	return []byte(fmt.Sprintf(`<?models version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
             <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -41,22 +50,22 @@ export function makeFindLiveStuNoXML(yy, tmGbn, schregNo, userNm) {
             </ColumnInfo>
             <Rows>
                 <Row type="update">
-                    <Col id="yy">${yy}</Col>
-                    <Col id="tmGbn">${tmGbn}</Col>
-                    <Col id="schregNo">${schregNo}</Col>
-                    <Col id="stdKorNm">${userNm}</Col>
+                    <Col id="yy">%s</Col>
+                    <Col id="tmGbn">%s</Col>
+                    <Col id="schregNo">%s</Col>
+                    <Col id="stdKorNm">%s</Col>
                     <OrgRow>
                     </OrgRow>
                 </Row>
             </Rows>
         </Dataset>
-    </Root>`;
+    </Root>`,
+		yy, tmGbn, schregNo, stdKorNm))
 }
 
-export function makesendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt) {
-    // outStayStGbn [1 : 미승인 2 : 승인]
-    // 승인되면 지울 수 가 없어서 리퀘스트 안보내봄
-    return `<?xml version="1.0" encoding="UTF-8"?>
+// MakeSendStayOutXML 외박 신청 위한 XML 만드는 함수
+func MakeSendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt string) []byte {
+	return []byte(fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
             <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -82,43 +91,26 @@ export function makesendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt,
             </ColumnInfo>
             <Rows>
                 <Row type="insert">
-                    <Col id="yy">${yy}</Col>
-                    <Col id="tmGbn">${tmGbn}</Col>
-                    <Col id="livstuNo">${livstuNo}</Col>         
-                    <Col id="outStayGbn">${outStayGbn}</Col>       
-                    <Col id="outStayFrDt">${outStayFrDt}</Col> 
-                    <Col id="outStayToDt">${outStayToDt}</Col> 
+                    <Col id="yy">%s</Col>
+                    <Col id="tmGbn">%s</Col>
+                    <Col id="livstuNo">%s</Col>         
+                    <Col id="outStayGbn">%s</Col>       
+                    <Col id="outStayFrDt">%s</Col> 
+                    <Col id="outStayToDt">%s</Col> 
                     <Col id="outStayStGbn">1</Col>     
                     <Col id="outStayStNm">미승인</Col>
-                    <Col id="outStayAplyDt">${outStayAplyDt}</Col>
+                    <Col id="outStayAplyDt">%s</Col>
                 </Row>
             </Rows>
         </Dataset>
-    </Root>`;
-}
+    </Root>`,
+		yy,
+		tmGbn,
+		livstuNo,
+		outStayGbn,
+		outStayFrDt,
+		outStayToDt,
+		outStayAplyDt,
+	))
 
-export function makeFindPointListXML(yy, tmGbn, schregNo, userNm) {
-    return `<?xml version="1.0" encoding="UTF-8"?>
-    <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
-        <Parameters>
-            <Parameter id="requestTimeStr">1627048919169</Parameter>
-        </Parameters>
-        <Dataset id="DS_COND">
-            <ColumnInfo>
-                <Column id="yy" type="STRING" size="256"  />
-                <Column id="tmGbn" type="STRING" size="256"  />
-                <Column id="schregNo" type="STRING" size="256"  />
-                <Column id="nm" type="STRING" size="256"  />
-                <Column id="lifSstArdGbn" type="STRING" size="256"  />
-            </ColumnInfo>
-            <Rows>
-                <Row>
-                    <Col id="yy">${yy}</Col>
-                    <Col id="tmGbn">${tmGbn}</Col>
-                    <Col id="schregNo">${schregNo}</Col>
-                    <Col id="nm">${userNm}</Col>
-                </Row>
-            </Rows>
-        </Dataset>
-    </Root>`
 }
