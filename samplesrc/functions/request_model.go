@@ -14,7 +14,7 @@ type FindRequestModel struct {
 
 type SendRequestModel struct {
 	DateList      []string          `json:"date_list"`
-	IsWeekend     []string          `json:"is_weekend"`
+	IsWeekend     []int             `json:"is_weekend"`
 	OutStayAplyDt string            `json:"outStayAplyDt"`
 	Cookies       map[string]string `json:"cookies"`
 }
