@@ -2,8 +2,7 @@ package functions
 
 import (
 	"auto_overnight_api/error_response"
-	"auto_overnight_api/model"
-	"auto_overnight_api/xmls"
+	"auto_overnight_api/models"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"net/http"
@@ -14,7 +13,7 @@ import (
 func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// 상벌점 내역 조회에 필요한 것들 파싱
-	var requestsModel model.FindRequestModel
+	var requestsModel models.FindRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
 		return error_response.MakeErrorResponse(error_response.ParsingJsonBodyError, 500)
@@ -32,10 +31,10 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	// 학생 이름, 학번 찾기 위한 채널 생성
-	findUserNmChan := make(chan model.FindUserNmModel)
+	findUserNmChan := make(chan models.FindUserNmModel)
 
 	// 파싱 시작
-	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
+	go models.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
 
 	studentInfo := <-findUserNmChan
 
@@ -48,7 +47,7 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	// 상벌점 내역 조회
-	pointList, err := xmls.RequestFindPointList(
+	pointList, err := models.RequestFindPointList(
 		client,
 		requestsModel.Year,
 		requestsModel.TmGbn,
@@ -69,7 +68,7 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	lifSstArdCtntChan := make(chan []string)
 
 	// 파싱 시작
-	go xmls.ParsingPointList(pointList, cmpScrChan, lifSstArdGbnChan, ardInptDtChan, lifSstArdCtntChan)
+	go models.ParsingPointList(pointList, cmpScrChan, lifSstArdGbnChan, ardInptDtChan, lifSstArdCtntChan)
 
 	responseBody["cmpScr"] = <-cmpScrChan
 	responseBody["lifSstArdGbn"] = <-lifSstArdGbnChan

@@ -1,4 +1,4 @@
-package model
+package models
 
 // LoginRequestModel 로그인에 필요한 json
 type LoginRequestModel struct {

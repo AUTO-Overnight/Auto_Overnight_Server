@@ -2,8 +2,7 @@ package functions
 
 import (
 	"auto_overnight_api/error_response"
-	"auto_overnight_api/model"
-	"auto_overnight_api/xmls"
+	"auto_overnight_api/models"
 	"bytes"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -16,7 +15,7 @@ import (
 func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// Id, Password 파싱
-	var requestsModel model.LoginRequestModel
+	var requestsModel models.LoginRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
 	if err != nil {
@@ -71,12 +70,12 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	}
 
 	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
-	findUserNmChan := make(chan model.FindUserNmModel)
-	findYYtmgbnChan := make(chan model.FindYYtmgbnModel)
+	findUserNmChan := make(chan models.FindUserNmModel)
+	findYYtmgbnChan := make(chan models.FindYYtmgbnModel)
 
 	// 파싱 시작
-	go xmls.RequestFindUserNm(client, findUserNmChan, nil)
-	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, nil)
+	go models.RequestFindUserNm(client, findUserNmChan, nil)
+	go models.RequestFindYYtmgbn(client, findYYtmgbnChan, nil)
 
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
@@ -90,7 +89,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	}
 
 	// 외박 신청 내역 조회
-	stayOutList, req, err := xmls.RequestFindStayOutList(
+	stayOutList, req, err := models.RequestFindStayOutList(
 		client,
 		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
 		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
@@ -117,8 +116,8 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	outStayStGbnChan := make(chan []string)
 
 	// 파싱 시작
-	go xmls.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
-	go xmls.ParsingCookies(req, cookiesChan)
+	go models.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
+	go models.ParsingCookies(req, cookiesChan)
 
 	responseBody["cookies"] = <-cookiesChan
 	responseBody["outStayFrDt"] = <-outStayFrDtChan

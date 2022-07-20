@@ -1,4 +1,4 @@
-package xmls
+package models
 
 import "encoding/xml"
 

@@ -2,8 +2,7 @@ package functions
 
 import (
 	"auto_overnight_api/error_response"
-	"auto_overnight_api/model"
-	"auto_overnight_api/xmls"
+	"auto_overnight_api/models"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"net/http"
@@ -14,7 +13,7 @@ import (
 func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// 외박 신청에 필요한 것들 파싱
-	var requestsModel model.SendRequestModel
+	var requestsModel models.SendRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
 	if err != nil {
@@ -33,12 +32,12 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}
 
 	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
-	findUserNmChan := make(chan model.FindUserNmModel)
-	findYYtmgbnChan := make(chan model.FindYYtmgbnModel)
+	findUserNmChan := make(chan models.FindUserNmModel)
+	findYYtmgbnChan := make(chan models.FindYYtmgbnModel)
 
 	// 파싱 시작
-	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
-	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, requestsModel.Cookies)
+	go models.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
+	go models.RequestFindYYtmgbn(client, findYYtmgbnChan, requestsModel.Cookies)
 
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
@@ -52,7 +51,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}
 
 	// 외박 신청 보내기
-	err = xmls.RequestSendStayOut(
+	err = models.RequestSendStayOut(
 		client,
 		studentInfo.XML,
 		yytmGbnInfo.XML,
@@ -65,7 +64,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}
 
 	// 외박 신청 내역 조회
-	stayOutList, _, err := xmls.RequestFindStayOutList(
+	stayOutList, _, err := models.RequestFindStayOutList(
 		client,
 		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
 		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
@@ -82,7 +81,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	outStayStGbnChan := make(chan []string)
 
 	// 파싱 시작
-	go xmls.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
+	go models.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
 
 	responseBody["outStayFrDt"] = <-outStayFrDtChan
 	responseBody["outStayToDt"] = <-outStayToDtChan

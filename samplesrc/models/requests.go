@@ -1,8 +1,7 @@
-package xmls
+package models
 
 import (
 	"auto_overnight_api/error_response"
-	"auto_overnight_api/model"
 	"bytes"
 	"encoding/xml"
 	"io/ioutil"
@@ -10,10 +9,10 @@ import (
 )
 
 // RequestFindYYtmgbn 해당 년도, 학기를 요청하여 가져오는 함수
-func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.FindYYtmgbnModel, cookies map[string]string) {
+func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan FindYYtmgbnModel, cookies map[string]string) {
 
 	// 채널로 보낼 응답용 구조체 생성
-	var response model.FindYYtmgbnModel
+	var response FindYYtmgbnModel
 
 	// http request 생성
 	req, err := http.NewRequest(
@@ -54,10 +53,10 @@ func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.FindYYtm
 }
 
 // RequestFindUserNm 학생의 이름, 학번을 요청하여 가져오는 함수
-func RequestFindUserNm(client *http.Client, findUserNmChan chan model.FindUserNmModel, cookies map[string]string) {
+func RequestFindUserNm(client *http.Client, findUserNmChan chan FindUserNmModel, cookies map[string]string) {
 
 	// 채널로 보낼 응답용 구조체 생성
-	var response model.FindUserNmModel
+	var response FindUserNmModel
 
 	// http request 생성
 	req, err := http.NewRequest(
