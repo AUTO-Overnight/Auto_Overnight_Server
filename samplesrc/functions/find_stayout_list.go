@@ -30,7 +30,7 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
 	studentInfo := <-findUserNmChan
 
-	stayOutList, _ := xmls.RequestFindStayOutList(
+	stayOutList, _, err := xmls.RequestFindStayOutList(
 		client,
 		requestsModel.Year,
 		requestsModel.TmGbn,
