@@ -1,7 +1,7 @@
-package test
+package main
 
 import (
-	"auto_overnight_api"
+	"auto_overnight_api/functions"
 	"github.com/aws/aws-lambda-go/events"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 // TestHandleRequestLogin login 테스트
 func TestHandleRequestLogin(t *testing.T) {
 
-	response, err := main.HandleRequest(events.APIGatewayProxyRequest{
+	response, err := functions.Login(events.APIGatewayProxyRequest{
 		Path: "/login",
 		Body: `
 		{
@@ -28,7 +28,7 @@ func TestHandleRequestLogin(t *testing.T) {
 // TestHandleRequestFindStayOutList 외박 신청 내역 조회 테스트
 func TestHandleRequestFindStayOutList(t *testing.T) {
 
-	response, err := main.HandleRequest(events.APIGatewayProxyRequest{
+	response, err := HandleRequest(events.APIGatewayProxyRequest{
 		Path: "/findstayoutlist",
 		Body: `
 		{
@@ -53,7 +53,7 @@ func TestHandleRequestFindStayOutList(t *testing.T) {
 // TestHandleRequestSendStayOut 외박 신청 테스트
 func TestHandleRequestSendStayOut(t *testing.T) {
 
-	response, err := main.HandleRequest(events.APIGatewayProxyRequest{
+	response, err := HandleRequest(events.APIGatewayProxyRequest{
 		Path: "/sendstayout",
 		Body: `
 		{
@@ -78,7 +78,7 @@ func TestHandleRequestSendStayOut(t *testing.T) {
 // TestHandleRequestFindPointList 상벌점 조회 테스트
 func TestHandleRequestFindPointList(t *testing.T) {
 
-	response, err := main.HandleRequest(events.APIGatewayProxyRequest{
+	response, err := HandleRequest(events.APIGatewayProxyRequest{
 		Path: "/findpointlist",
 		Body: `
 		{
