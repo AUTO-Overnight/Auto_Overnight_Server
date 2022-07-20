@@ -35,10 +35,10 @@ func TestHandleRequestFindStayOutList(t *testing.T) {
 			"tmGbn" : "5",
 			"userNm" : "이서윤",
 			"cookies": {
-				"JSVSESSIONID": "MjgadzJs5544V5yIo5NJtz71xSUC1ZM8Qf04RFLgt91ngXXs73JwerCo4MO0Gqt8.amV1c19kb21haW4vanN2XzI=",
-				"_SSO_Global_Logout_url": "get%5Ehttps%3A%2F%2Fportal.tukorea.ac.kr%3A443%2Fsso%2Flogout.jsp%24get%5Ehttps%3A%2F%2Fdream.tukorea.ac.kr%3A443%2Fcom%2FSsoCtr%2Fj_logout.do%24",
-				"kalogin": "NZ4uqEuKiTiR/A==$server"
-			}
+        "JSVSESSIONID": "Gr3tqe4HaB31DcIXFeYFoLf1NIJfPGEIQ1xNYsyMy8PK7Um4764mQdacC6L9RE0A.amV1c19kb21haW4vanN2XzI=",
+        "_SSO_Global_Logout_url": "get%5Ehttps%3A%2F%2Fportal.tukorea.ac.kr%3A443%2Fsso%2Flogout.jsp%24get%5Ehttps%3A%2F%2Fdream.tukorea.ac.kr%3A443%2Fcom%2FSsoCtr%2Fj_logout.do%24",
+        "kalogin": "xz+sOVeR307xJg==$server"
+    }
 		}`,
 	})
 
