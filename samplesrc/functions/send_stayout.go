@@ -2,6 +2,7 @@ package functions
 
 import (
 	"auto_overnight_api/error_response"
+	"auto_overnight_api/model"
 	"auto_overnight_api/xmls"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -13,7 +14,7 @@ import (
 func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// 외박 신청에 필요한 것들 파싱
-	var requestsModel SendRequestModel
+	var requestsModel model.SendRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
 	if err != nil {
@@ -32,34 +33,29 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}
 
 	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
-	findUserNmChan := make(chan xmls.Root)
-	findUserNmErrChan := make(chan error)
-	findYYtmgbnChan := make(chan xmls.Root)
-	findYYtmgbnErrChan := make(chan error)
+	findUserNmChan := make(chan model.FindUserNmModel)
+	findYYtmgbnChan := make(chan model.FindYYtmgbnModel)
 
 	// 파싱 시작
-	go xmls.RequestFindUserNm(client, findUserNmChan, findUserNmErrChan, requestsModel.Cookies)
-	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, findYYtmgbnErrChan, requestsModel.Cookies)
-
-	err1 := <-findUserNmErrChan
-	err2 := <-findYYtmgbnErrChan
-
-	if err1 != nil || err2 != nil {
-		return error_response.MakeErrorResponse(err, 500)
-	}
+	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
+	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, requestsModel.Cookies)
 
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
 
-	if studentInfo.Parameters.Parameter == "-600" {
+	if studentInfo.Error != nil || yytmGbnInfo.Error != nil {
+		return error_response.MakeErrorResponse(err, 500)
+	}
+
+	if studentInfo.XML.Parameters.Parameter == "-600" {
 		return error_response.MakeErrorResponse(error_response.WrongIdOrPasswordError, 400)
 	}
 
 	// 외박 신청 보내기
 	err = xmls.RequestSendStayOut(
 		client,
-		studentInfo,
-		yytmGbnInfo,
+		studentInfo.XML,
+		yytmGbnInfo.XML,
 		requestsModel.DateList,
 		requestsModel.IsWeekend,
 		requestsModel.OutStayAplyDt,
@@ -71,10 +67,10 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	// 외박 신청 내역 조회
 	stayOutList, _, err := xmls.RequestFindStayOutList(
 		client,
-		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
-		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
+		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
 		requestsModel.Cookies)
 
 	// 응답 위한 json body 만들기

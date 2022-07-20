@@ -2,6 +2,7 @@ package functions
 
 import (
 	"auto_overnight_api/error_response"
+	"auto_overnight_api/model"
 	"auto_overnight_api/xmls"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -13,7 +14,7 @@ import (
 func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// 외박 신청 내역 조회에 필요한 것들 파싱
-	var requestsModel FindRequestModel
+	var requestsModel model.FindRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
 		return error_response.MakeErrorResponse(error_response.ParsingJsonBodyError, 500)
@@ -31,27 +32,28 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	}
 
 	// 학생 이름, 학번 찾기 위한 채널 생성
-	findUserNmChan := make(chan xmls.Root)
-	findUserNmErrChan := make(chan error)
+	findUserNmChan := make(chan model.FindUserNmModel)
 
 	// 파싱 시작
-	go xmls.RequestFindUserNm(client, findUserNmChan, findUserNmErrChan, requestsModel.Cookies)
+	go xmls.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
 
-	err = <-findUserNmErrChan
+	studentInfo := <-findUserNmChan
 
 	if err != nil {
 		return error_response.MakeErrorResponse(err, 500)
 	}
 
-	studentInfo := <-findUserNmChan
+	if studentInfo.XML.Parameters.Parameter == "-600" {
+		return error_response.MakeErrorResponse(error_response.WrongCookieError, 400)
+	}
 
 	// 외박 신청 내역 조회
 	stayOutList, _, err := xmls.RequestFindStayOutList(
 		client,
 		requestsModel.Year,
 		requestsModel.TmGbn,
-		studentInfo.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
+		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
 		requestsModel.Cookies)
 
 	// 응답 위한 json body 만들기
