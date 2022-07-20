@@ -3,6 +3,7 @@ package xmls
 import "fmt"
 
 var (
+	// FindYYtmgbnXML 년도, 학기 찾기 위한 XML
 	FindYYtmgbnXML = []byte(`<?xmls version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
@@ -20,6 +21,7 @@ var (
 		</Rows>
 	</Dataset>
 </Root>`)
+	// FindUserNmXML 이름, 학번 찾기 위한 XML
 	FindUserNmXML = []byte(
 		`<?xmls version="1.0" encoding="UTF-8"?>
 			<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
@@ -30,6 +32,7 @@ var (
 			</Root>`)
 )
 
+// MakefindLiveStuNoXML LiveStuNo 찾기 위한 XML 만드는 함수
 func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
 	return []byte(fmt.Sprintf(`<?xmls version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
@@ -60,6 +63,7 @@ func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
 		yy, tmGbn, schregNo, stdKorNm))
 }
 
+// MakeSendStayOutXML 외박 신청 위한 XML 만드는 함수
 func MakeSendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt string) []byte {
 	return []byte(fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
