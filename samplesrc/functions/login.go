@@ -13,6 +13,8 @@ import (
 
 // Login Id와 Password를 Json으로 입력 받아 로그인하고 이름, 년도, 학기, 쿠키, 외박 신청 내역을 return
 func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	// Id, Password 파싱
 	var requestsModel LoginRequestModel
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
@@ -69,10 +71,20 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 
 	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
 	findUserNmChan := make(chan xmls.Root)
+	findUserNmErrChan := make(chan error)
 	findYYtmgbnChan := make(chan xmls.Root)
+	findYYtmgbnErrChan := make(chan error)
 
-	go xmls.RequestFindUserNm(client, findUserNmChan, nil)
-	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, nil)
+	// 파싱 시작
+	go xmls.RequestFindUserNm(client, findUserNmChan, findUserNmErrChan, nil)
+	go xmls.RequestFindYYtmgbn(client, findYYtmgbnChan, findYYtmgbnErrChan, nil)
+
+	err1 := <-findUserNmErrChan
+	err2 := <-findYYtmgbnErrChan
+
+	if err1 != nil || err2 != nil {
+		return error_response.MakeErrorResponse(err, 500)
+	}
 
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
