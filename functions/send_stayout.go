@@ -75,17 +75,12 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	// 응답 위한 json body 만들기
 	responseBody := make(map[string]interface{})
 
-	// 외박 신청 내역 파싱 내역 전달받기 위한 채널 생성
-	outStayFrDtChan := make(chan []string)
-	outStayToDtChan := make(chan []string)
-	outStayStGbnChan := make(chan []string)
-
 	// 파싱 시작
-	go models.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
+	outStayFrDt, outStayToDt, outStayStGbn := models.ParsingStayoutList(stayOutList)
 
-	responseBody["outStayFrDt"] = <-outStayFrDtChan
-	responseBody["outStayToDt"] = <-outStayToDtChan
-	responseBody["outStayStGbn"] = <-outStayStGbnChan
+	responseBody["outStayFrDt"] = outStayFrDt
+	responseBody["outStayToDt"] = outStayToDt
+	responseBody["outStayStGbn"] = outStayStGbn
 
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)

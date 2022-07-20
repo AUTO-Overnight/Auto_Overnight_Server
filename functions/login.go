@@ -109,20 +109,14 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	responseBody["yy"] = yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data
 	responseBody["tmGbn"] = yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data
 
-	// 쿠키, 외박 신청 내역 파싱 내역 전달받기 위한 채널 생성
-	cookiesChan := make(chan map[string]string)
-	outStayFrDtChan := make(chan []string)
-	outStayToDtChan := make(chan []string)
-	outStayStGbnChan := make(chan []string)
-
 	// 파싱 시작
-	go models.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
-	go models.ParsingCookies(req, cookiesChan)
+	outStayFrDt, outStayToDt, outStayStGbn := models.ParsingStayoutList(stayOutList)
+	cookies := models.ParsingCookies(req)
 
-	responseBody["cookies"] = <-cookiesChan
-	responseBody["outStayFrDt"] = <-outStayFrDtChan
-	responseBody["outStayToDt"] = <-outStayToDtChan
-	responseBody["outStayStGbn"] = <-outStayStGbnChan
+	responseBody["cookies"] = cookies
+	responseBody["outStayFrDt"] = outStayFrDt
+	responseBody["outStayToDt"] = outStayToDt
+	responseBody["outStayStGbn"] = outStayStGbn
 
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)

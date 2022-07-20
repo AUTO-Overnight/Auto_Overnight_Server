@@ -61,19 +61,13 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	// 응답 위한 json body 만들기
 	responseBody := make(map[string]interface{})
 
-	// 외박 신청 내역 파싱 내역 전달받기 위한 채널 생성
-	cmpScrChan := make(chan []string)
-	lifSstArdGbnChan := make(chan []string)
-	ardInptDtChan := make(chan []string)
-	lifSstArdCtntChan := make(chan []string)
-
 	// 파싱 시작
-	go models.ParsingPointList(pointList, cmpScrChan, lifSstArdGbnChan, ardInptDtChan, lifSstArdCtntChan)
+	cmpScr, lifSstArdGbn, ardInptDt, lifSstArdCtnt := models.ParsingPointList(pointList)
 
-	responseBody["cmpScr"] = <-cmpScrChan
-	responseBody["lifSstArdGbn"] = <-lifSstArdGbnChan
-	responseBody["ardInptDt"] = <-ardInptDtChan
-	responseBody["lifSstArdCtnt"] = <-lifSstArdCtntChan
+	responseBody["cmpScr"] = cmpScr
+	responseBody["lifSstArdGbn"] = lifSstArdGbn
+	responseBody["ardInptDt"] = ardInptDt
+	responseBody["lifSstArdCtnt"] = lifSstArdCtnt
 
 	// 응답 json 만들기
 	responseJson, _ := json.Marshal(responseBody)
