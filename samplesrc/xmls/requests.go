@@ -8,57 +8,79 @@ import (
 	"net/http"
 )
 
-func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root, cookies map[string]string) {
+// RequestFindYYtmgbn 해당 년도, 학기를 요청하여 가져오는 함수
+func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan Root, findYYtmgbnErrChan chan error,
+	cookies map[string]string) {
+	// http request 생성
 	req, err := http.NewRequest(
 		"POST",
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findYyTmGbnList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(FindYYtmgbnXML))
 	if err != nil {
-		panic(err)
+		findYYtmgbnErrChan <- error_response.MakeHttpRequestError
 	}
 
+	// 입력 받은 쿠키가 존재한다면 설정하기
 	if cookies != nil {
 		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
 		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
 		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
 	}
 
+	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		findYYtmgbnErrChan <- error_response.SendHttpRequestError
 	}
 
+	// body 읽어서 구조체 저장
 	body, _ := ioutil.ReadAll(res.Body)
 	var yytmGbnInfo Root
-	xml.Unmarshal(body, &yytmGbnInfo)
+	err = xml.Unmarshal(body, &yytmGbnInfo)
 
+	if err != nil {
+		findYYtmgbnErrChan <- error_response.ParsingXMLBodyError
+	}
+
+	findYYtmgbnErrChan <- nil
 	findYYtmgbnChan <- yytmGbnInfo
 }
 
-func RequestFindUserNm(client *http.Client, findUserNmChan chan Root, cookies map[string]string) {
+// RequestFindUserNm 학생의 이름, 학번을 요청하여 가져오는 함수
+func RequestFindUserNm(client *http.Client, findUserNmChan chan Root, findUserNmErrChan chan error,
+	cookies map[string]string) {
+	// http request 생성
 	req, err := http.NewRequest(
 		"POST",
 		"https://dream.tukorea.ac.kr/com/SsoCtr/findMyGLIOList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(FindUserNmXML))
 	if err != nil {
-		panic(err)
+		findUserNmErrChan <- error_response.MakeHttpRequestError
 	}
 
+	// 입력 받은 쿠키가 존재한다면 설정하기
 	if cookies != nil {
 		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
 		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
 		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
 	}
 
+	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		findUserNmErrChan <- error_response.SendHttpRequestError
 	}
 
+	// body 읽어서 구조체 저장
 	body, _ := ioutil.ReadAll(res.Body)
 	var studentInfo Root
-	xml.Unmarshal(body, &studentInfo)
+	err = xml.Unmarshal(body, &studentInfo)
 
+	if err != nil {
+		findUserNmErrChan <- error_response.ParsingXMLBodyError
+	}
+
+	findUserNmErrChan <- nil
 	findUserNmChan <- studentInfo
 }
 
@@ -105,6 +127,7 @@ func RequestFindStayOutList(client *http.Client,
 	return temp, req, nil
 }
 
+// RequestFindPointList 상벌점 내역을 요청하여 가지고 오는 함수
 func RequestFindPointList(client *http.Client,
 	yy, tmGbn, schregNo, stdKorNm string, cookies map[string]string) Root {
 	findPointListXML := MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm)
@@ -137,9 +160,11 @@ func RequestFindPointList(client *http.Client,
 	return temp
 }
 
+// RequestSendStayOut 외박 신청하는 함수
 func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
 	DateList []string, IsWeekend []int, OutStayAplyDt string, cookies map[string]string) error {
 
+	// LiveStuNo 찾기 위한 XML 만들기
 	findLiveStuNoXML := MakefindLiveStuNoXML(
 		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
 		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
@@ -147,41 +172,48 @@ func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
 		studentInfo.Dataset[0].Rows.Row[0].Col[0].Data,
 	)
 
+	// LiveStuNo 찾기 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findMdstrmLeaveAplyList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(findLiveStuNoXML))
 	if err != nil {
-		panic(err)
+		return error_response.MakeHttpRequestError
 	}
 
+	// 입력 받은 쿠키가 존재한다면 설정하기
 	if cookies != nil {
 		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
 		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
 		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
 	}
 
+	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return error_response.SendHttpRequestError
 	}
-	body, _ := ioutil.ReadAll(res.Body)
 
+	// body 읽어서 구조체에 저장
+	body, _ := ioutil.ReadAll(res.Body)
 	var liveStuNo Root
 	err = xml.Unmarshal(body, &liveStuNo)
 	if err != nil {
-		panic(err)
+		return error_response.ParsingXMLBodyError
 	}
 
+	// 요청한 날짜만큼 외박 신청 보내기
 	var outStayGbn string
 	for i := 0; i < len(DateList); i++ {
 		if IsWeekend[i] == 0 {
+			// 평일
 			outStayGbn = "07"
 		} else {
+			// 주말
 			outStayGbn = "04"
 		}
 
-		send(
+		err = send(
 			MakeSendStayOutXML(
 				yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
 				yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
@@ -194,29 +226,38 @@ func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
 			client,
 			cookies,
 		)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func send(sendStayOutXML []byte, client *http.Client, cookies map[string]string) {
+// send 외박 신청 http request 함수
+func send(sendStayOutXML []byte, client *http.Client, cookies map[string]string) error {
+	// 외박 신청 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(sendStayOutXML))
-
 	if err != nil {
-		panic(err)
+		return error_response.MakeHttpRequestError
 	}
 
+	// 입력 받은 쿠키가 존재한다면 설정하기
 	if cookies != nil {
 		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
 		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
 		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
 	}
 
+	// http request 보내기
 	_, err = client.Do(req)
 	if err != nil {
-		panic(err)
+		return error_response.SendHttpRequestError
 	}
+
+	return nil
 }
