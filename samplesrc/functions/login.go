@@ -109,7 +109,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	outStayStGbnChan := make(chan []string)
 
 	// 파싱 시작
-	go xmls.ParsingStayoutList(stayOutList)
+	go xmls.ParsingStayoutList(stayOutList, outStayFrDtChan, outStayToDtChan, outStayStGbnChan)
 	go xmls.ParsingCookies(req, cookiesChan)
 
 	responseBody["cookies"] = <-cookiesChan
