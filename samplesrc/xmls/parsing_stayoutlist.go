@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-func ParsingStayoutList(stayOutList Root) {
+func ParsingStayoutList(stayOutList Root, outStayFrDtChan, outStayToDtChan, outStayStGbnChan chan []string) {
 
 	var wg sync.WaitGroup
 	wg.Add(len(stayOutList.Dataset[1].Rows.Row))
@@ -15,40 +15,20 @@ func ParsingStayoutList(stayOutList Root) {
 	outStayToDt := make([]string, len(stayOutList.Dataset[1].Rows.Row))
 	outStayStGbn := make([]string, len(stayOutList.Dataset[1].Rows.Row))
 
-	go func() {
-		for i, v := range stayOutList.Dataset[1].Rows.Row {
-			go func(i int, v Row) {
-				outStayFrDt[i] = v.Col[2].Data
-				wg.Done()
-			}(i, v)
-		}
-	}()
-	go func() {
-		for i, v := range stayOutList.Dataset[1].Rows.Row {
-			go func(i int, v Row) {
-				outStayToDt[i] = v.Col[1].Data
-				wg.Done()
-			}(i, v)
-		}
-	}()
-	go func() {
-		for i, v := range stayOutList.Dataset[1].Rows.Row {
-			go func(i int, v Row) {
-				outStayStGbn[i] = v.Col[0].Data
-				wg.Done()
-			}(i, v)
-		}
-	}()
+	for i, v := range stayOutList.Dataset[1].Rows.Row {
+		go func(i int, v Row) {
+			outStayFrDt[i] = v.Col[2].Data
+			outStayToDt[i] = v.Col[1].Data
+			outStayStGbn[i] = v.Col[5].Data
+			wg.Done()
+		}(i, v)
+	}
 
-	//for i, v := range stayOutList.Dataset[1].Rows.Row {
-	//	go func(i int, v Row) {
-	//		outStayFrDt[i] = v.Col[2].Data
-	//		outStayToDt[i] = v.Col[1].Data
-	//		outStayStGbn[i] = v.Col[0].Data
-	//		wg.Done()
-	//	}(i, v)
-	//}
+	wg.Wait()
 
+	outStayFrDtChan <- outStayFrDt
+	outStayToDtChan <- outStayToDt
+	outStayStGbnChan <- outStayStGbn
 }
 
 func ParsingCookies(req *http.Request, cookiesChan chan map[string]string) {
