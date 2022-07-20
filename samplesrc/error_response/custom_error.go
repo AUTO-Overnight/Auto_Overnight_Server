@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ParsingJsonBodyError   = errors.New("json body 파싱 에러")
+	MakeJsonBodyError      = errors.New("json body 생성 에러")
 	ParsingXMLBodyError    = errors.New("XML body 파싱 에러")
 	EmptyIdOrPasswordError = errors.New("id와 password를 입력해주세요")
 	WrongIdOrPasswordError = errors.New("id 또는 비밀번호를 잘못 입력했습니다")
