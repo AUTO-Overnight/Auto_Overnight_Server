@@ -127,7 +127,8 @@ func RequestFindPointList(client *http.Client,
 }
 
 func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
-	DateList, IsWeekend []string, OutStayAplyDt string, cookies map[string]string) error {
+	DateList []string, IsWeekend []int, OutStayAplyDt string, cookies map[string]string) error {
+
 	findLiveStuNoXML := MakefindLiveStuNoXML(
 		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
 		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
@@ -154,6 +155,7 @@ func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
 		panic(err)
 	}
 	body, _ := ioutil.ReadAll(res.Body)
+
 	var liveStuNo Root
 	err = xml.Unmarshal(body, &liveStuNo)
 	if err != nil {
@@ -162,7 +164,7 @@ func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
 
 	var outStayGbn string
 	for i := 0; i < len(DateList); i++ {
-		if IsWeekend[i] == "0" {
+		if IsWeekend[i] == 0 {
 			outStayGbn = "07"
 		} else {
 			outStayGbn = "04"
@@ -179,19 +181,27 @@ func RequestSendStayOut(client *http.Client, studentInfo, yytmGbnInfo Root,
 				OutStayAplyDt,
 			),
 			client,
+			cookies,
 		)
 	}
 
 	return nil
 }
 
-func send(sendStayOutXML []byte, client *http.Client) {
+func send(sendStayOutXML []byte, client *http.Client, cookies map[string]string) {
 	req, err := http.NewRequest(
 		"POST",
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(sendStayOutXML))
+
 	if err != nil {
 		panic(err)
+	}
+
+	if cookies != nil {
+		req.AddCookie(&http.Cookie{Name: "_SSO_Global_Logout_url", Value: cookies["_SSO_Global_Logout_url"]})
+		req.AddCookie(&http.Cookie{Name: "kalogin", Value: cookies["kalogin"]})
+		req.AddCookie(&http.Cookie{Name: "JSVSESSIONID", Value: cookies["JSVSESSIONID"]})
 	}
 
 	_, err = client.Do(req)
