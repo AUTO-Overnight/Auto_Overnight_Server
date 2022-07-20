@@ -14,5 +14,5 @@ func MakeErrorResponse(err error, statusCode int) (events.APIGatewayProxyRespons
 		StatusCode: statusCode,
 		Body:       string(responseJson),
 	}
-	return response, err
+	return response, nil
 }
