@@ -46,7 +46,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 		panic(err)
 	}
 
-	stayOutList, _ := xmls.RequestFindStayOutList(
+	stayOutList, _, err := xmls.RequestFindStayOutList(
 		client,
 		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[0].Data,
 		yytmGbnInfo.Dataset[0].Rows.Row[0].Col[1].Data,
