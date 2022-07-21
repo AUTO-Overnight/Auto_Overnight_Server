@@ -1,7 +1,7 @@
 package main
 
 import (
-	"auto_overnight_api/functions"
+	"auto_overnight_api/route"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -14,16 +14,16 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	switch request.Path {
 	// 로그인
 	case "/login":
-		response, err = functions.Login(request)
+		response, err = route.Login(request)
 	// 외박 신청 보내기
 	case "/sendstayout":
-		response, err = functions.SendStayOut(request)
+		response, err = route.SendStayOut(request)
 	// 외박 신청 내역 조회
 	case "/findstayoutlist":
-		response, err = functions.FindStayOutList(request)
+		response, err = route.FindStayOutList(request)
 	// 상벌점 조회
 	case "/findpointlist":
-		response, err = functions.FindPointList(request)
+		response, err = route.FindPointList(request)
 	// 잘못된 Path
 	default:
 		response, err = events.APIGatewayProxyResponse{StatusCode: 404}, nil
