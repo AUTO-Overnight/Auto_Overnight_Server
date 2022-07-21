@@ -1,7 +1,7 @@
 package main
 
 import (
-	"auto_overnight_api/functions"
+	"auto_overnight_api/route"
 	"github.com/aws/aws-lambda-go/events"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 // TestHandleRequestLogin login 테스트
 func TestHandleRequestLogin(t *testing.T) {
 
-	response, err := functions.Login(events.APIGatewayProxyRequest{
+	response, err := route.Login(events.APIGatewayProxyRequest{
 		Path: "/login",
 		Body: `
 		{
@@ -35,11 +35,7 @@ func TestHandleRequestFindStayOutList(t *testing.T) {
 			"yy" : "2022",
 			"tmGbn" : "5",
 			"userNm" : "이서윤",
-			"cookies": {
-        "JSVSESSIONID": "Gr3tqe4HaB31DcIXFeYFoLf1NIJfPGEIQ1xNYsyMy8PK7Um4764mQdacC6L9RE0A.amV1c19kb21haW4vanN2XzI=",
-        "_SSO_Global_Logout_url": "get%5Ehttps%3A%2F%2Fportal.tukorea.ac.kr%3A443%2Fsso%2Flogout.jsp%24get%5Ehttps%3A%2F%2Fdream.tukorea.ac.kr%3A443%2Fcom%2FSsoCtr%2Fj_logout.do%24",
-        "kalogin": "xz+sOVeR307xJg==$server"
-    }
+			"cookies": "aralZ3uJuRk1mOpKsiFGx4iD12Yyzbv09AKa1U4Z77ciz81a75ITcP0rESgsw4F6.amV1c19kb21haW4vanN2XzE="
 		}`,
 	})
 
@@ -57,14 +53,10 @@ func TestHandleRequestSendStayOut(t *testing.T) {
 		Path: "/sendstayout",
 		Body: `
 		{
-			"date_list" : ["20220721"],
+			"date_list" : ["20220902"],
 			"is_weekend" : [0],
-			"outStayAplyDt" : "20220720",
-			"cookies": {
-				"JSVSESSIONID": "MjgadzJs5544V5yIo5NJtz71xSUC1ZM8Qf04RFLgt91ngXXs73JwerCo4MO0Gqt8.amV1c19kb21haW4vanN2XzI=",
-				"_SSO_Global_Logout_url": "get%5Ehttps%3A%2F%2Fportal.tukorea.ac.kr%3A443%2Fsso%2Flogout.jsp%24get%5Ehttps%3A%2F%2Fdream.tukorea.ac.kr%3A443%2Fcom%2FSsoCtr%2Fj_logout.do%24",
-				"kalogin": "NZ4uqEuKiTiR/A==$server"
-			}
+			"outStayAplyDt" : "20220721",
+			"cookies": "aralZ3uJuRk1mOpKsiFGx4iD12Yyzbv09AKa1U4Z77ciz81a75ITcP0rESgsw4F6.amV1c19kb21haW4vanN2XzE="
 		}`,
 	})
 
@@ -82,14 +74,10 @@ func TestHandleRequestFindPointList(t *testing.T) {
 		Path: "/findpointlist",
 		Body: `
 		{
-			"yy" : "2021",
-			"tmGbn" : "2",
+			"yy" : "2022",
+			"tmGbn" : "1",
 			"userNm" : "이서윤",
-			"cookies": {
-				"JSVSESSIONID": "MjgadzJs5544V5yIo5NJtz71xSUC1ZM8Qf04RFLgt91ngXXs73JwerCo4MO0Gqt8.amV1c19kb21haW4vanN2XzI=",
-				"_SSO_Global_Logout_url": "get%5Ehttps%3A%2F%2Fportal.tukorea.ac.kr%3A443%2Fsso%2Flogout.jsp%24get%5Ehttps%3A%2F%2Fdream.tukorea.ac.kr%3A443%2Fcom%2FSsoCtr%2Fj_logout.do%24",
-				"kalogin": "NZ4uqEuKiTiR/A==$server"
-			}
+			"cookies": "aralZ3uJuRk1mOpKsiFGx4iD12Yyzbv09AKa1U4Z77ciz81a75ITcP0rESgsw4F6.amV1c19kb21haW4vanN2XzE="
 		}`,
 	})
 
