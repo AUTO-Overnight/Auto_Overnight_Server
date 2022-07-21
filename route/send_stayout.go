@@ -51,7 +51,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return custom_error.MakeErrorResponse(custom_error.WrongIdOrPasswordError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongCookieError, 400)
 	}
 
 	// 외박 신청 보내기
