@@ -1,6 +1,10 @@
-package error_response
+package custom_error
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+	"github.com/aws/aws-lambda-go/events"
+)
 
 var (
 	ParsingJsonBodyError   = errors.New("json body 파싱 에러")
@@ -13,3 +17,16 @@ var (
 	MakeHttpRequestError   = errors.New("http request 생성 에러")
 	SendHttpRequestError   = errors.New("http request 요청 에러")
 )
+
+// MakeErrorResponse 에러 응답을 만드는 함수
+func MakeErrorResponse(err error, statusCode int) (events.APIGatewayProxyResponse, error) {
+	body := make(map[string]string)
+	body["error"] = err.Error()
+
+	responseJson, _ := json.Marshal(body)
+	response := events.APIGatewayProxyResponse{
+		StatusCode: statusCode,
+		Body:       string(responseJson),
+	}
+	return response, nil
+}
