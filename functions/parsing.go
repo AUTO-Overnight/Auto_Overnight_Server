@@ -28,8 +28,11 @@ func ParsingStayoutList(stayOutList model.Root) model.StayOutList {
 
 // ParsingCookies 쿠키 파싱하는 함수
 func ParsingCookies(client *http.Client) string {
+	// url 파싱
 	u, _ := url.Parse("https://dream.tukorea.ac.kr/")
 	var value string
+
+	// JSVSESSIONID 찾기
 	for i := 0; i < len(client.Jar.Cookies(u)); i++ {
 		if client.Jar.Cookies(u)[i].Name == "JSVSESSIONID" {
 			value = client.Jar.Cookies(u)[i].Value
@@ -59,12 +62,15 @@ func ParsingPointList(pointList model.Root) model.PointList {
 	return m
 }
 
+// MakeCookieJar cookiejar에 쿠키를 설정해주는 함수
 func MakeCookieJar(s string, jar *cookiejar.Jar) {
+	// url 파싱
 	u, _ := url.Parse("https://dream.tukorea.ac.kr/")
 
+	// JSVSESSIONID 쿠키 생성
 	cookie := make([]*http.Cookie, 1)
-	cookie[0].Name = "JSVSESSIONID"
-	cookie[0].Path = s
+	cookie[0] = &http.Cookie{Name: "JSVSESSIONID", Value: s}
 
+	// 쿠키 설정
 	jar.SetCookies(u, cookie)
 }
