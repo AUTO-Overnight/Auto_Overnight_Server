@@ -1,6 +1,9 @@
-package models
+package model
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"net/http"
+)
 
 /*
 <?xml version="1.0" encoding="UTF-8"?>
@@ -22,6 +25,13 @@ import "encoding/xml"
 	</Dataset>
 </Root>
 */
+
+// ResponseModel 응답 받을 때 사용하는 구조체
+type ResponseModel struct {
+	XML   Root
+	Req   *http.Request
+	Error error
+}
 
 type Root struct {
 	XMLName    xml.Name   `xml:"Root"`

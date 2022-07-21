@@ -1,10 +1,10 @@
-package models
+package model
 
 import "fmt"
 
 var (
 	// FindYYtmgbnXML 년도, 학기 찾기 위한 XML
-	FindYYtmgbnXML = []byte(`<?models version="1.0" encoding="UTF-8"?>
+	FindYYtmgbnXML = []byte(`<?model version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -23,7 +23,7 @@ var (
 </Root>`)
 	// FindUserNmXML 이름, 학번 찾기 위한 XML
 	FindUserNmXML = []byte(
-		`<?models version="1.0" encoding="UTF-8"?>
+		`<?model version="1.0" encoding="UTF-8"?>
 			<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 				<Parameters>
 					<Parameter id="columnList">persNo|userNm</Parameter>
@@ -34,7 +34,7 @@ var (
 
 // MakefindLiveStuNoXML LiveStuNo 찾기 위한 XML 만드는 함수
 func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
-	return []byte(fmt.Sprintf(`<?models version="1.0" encoding="UTF-8"?>
+	return []byte(fmt.Sprintf(`<?model version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
             <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
