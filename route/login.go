@@ -1,8 +1,9 @@
-package functions
+package route
 
 import (
-	"auto_overnight_api/error_response"
-	"auto_overnight_api/models"
+	"auto_overnight_api/custom_error"
+	"auto_overnight_api/functions"
+	"auto_overnight_api/model"
 	"bytes"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -15,14 +16,14 @@ import (
 func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// Id, Password 파싱
-	var requestsModel models.LoginRequestModel
+	var requestsModel model.LoginRequest
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
 	}
 	if requestsModel.Id == "" || requestsModel.PassWord == "" {
-		return error_response.MakeErrorResponse(error_response.EmptyIdOrPasswordError, 400)
+		return custom_error.MakeErrorResponse(custom_error.EmptyIdOrPasswordError, 400)
 	}
 
 	// x-www-form-urlencoded 방식으로 로그인 하기 위해 form 생성
@@ -35,13 +36,13 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.MakeCookieJarError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarError, 500)
 	}
 
 	// 로그인 http request 생성
 	req, err := http.NewRequest("POST", "https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null", bytes.NewBufferString(loginInfo.Encode()))
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.MakeHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeHttpRequestError, 500)
 	}
 
 	// Content-Type 헤더 설정, client에 cookie jar 설정
@@ -52,7 +53,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	// 로그인 시도
 	res, err := client.Do(req)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.SendHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.SendHttpRequestError, 500)
 	}
 
 	defer res.Body.Close()
@@ -61,47 +62,47 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	req, err = http.NewRequest("GET", "https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=", nil)
 
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.MakeHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeHttpRequestError, 500)
 	}
 
 	res, err = client.Do(req)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.SendHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.SendHttpRequestError, 500)
 	}
 
 	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
-	findUserNmChan := make(chan models.FindUserNmModel)
-	findYYtmgbnChan := make(chan models.FindYYtmgbnModel)
+	findUserNmChan := make(chan model.ResponseModel)
+	findYYtmgbnChan := make(chan model.ResponseModel)
 
 	// 파싱 시작
-	go models.RequestFindUserNm(client, findUserNmChan, nil)
-	go models.RequestFindYYtmgbn(client, findYYtmgbnChan, nil)
+	go functions.RequestFindUserNm(client, findUserNmChan)
+	go functions.RequestFindYYtmgbn(client, findYYtmgbnChan)
 
 	studentInfo := <-findUserNmChan
 	yytmGbnInfo := <-findYYtmgbnChan
 
 	if studentInfo.Error != nil || yytmGbnInfo.Error != nil {
-		return error_response.MakeErrorResponse(err, 500)
+		return custom_error.MakeErrorResponse(err, 500)
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return error_response.MakeErrorResponse(error_response.WrongIdOrPasswordError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongIdOrPasswordError, 400)
 	}
 
 	// 외박 신청 내역 조회
-	stayOutList, req, err := models.RequestFindStayOutList(
+	stayOutList := functions.RequestFindStayOutList(
 		client,
 		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
 		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
 		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
 		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-		nil)
+	)
 
-	if err != nil {
-		return error_response.MakeErrorResponse(err, 500)
+	if stayOutList.Error != nil {
+		return custom_error.MakeErrorResponse(err, 500)
 	}
 
-	// 응답 위한 json body 만들기
+	// 응답 위한 json body 선언
 	responseBody := make(map[string]interface{})
 
 	// 이름, 년도, 학기 저장
@@ -110,18 +111,18 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	responseBody["tmGbn"] = yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data
 
 	// 파싱 시작
-	outStayFrDt, outStayToDt, outStayStGbn := models.ParsingStayoutList(stayOutList)
-	cookies := models.ParsingCookies(req)
+	sm := functions.ParsingStayoutList(stayOutList.XML)
+	cookie := functions.ParsingCookies(client)
 
-	responseBody["cookies"] = cookies
-	responseBody["outStayFrDt"] = outStayFrDt
-	responseBody["outStayToDt"] = outStayToDt
-	responseBody["outStayStGbn"] = outStayStGbn
+	responseBody["cookies"] = cookie
+	responseBody["outStayFrDt"] = sm.OutStayFrDt
+	responseBody["outStayToDt"] = sm.OutStayToDt
+	responseBody["outStayStGbn"] = sm.OutStayStGbn
 
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.MakeJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyError, 500)
 	}
 	response := events.APIGatewayProxyResponse{
 		StatusCode: 200,

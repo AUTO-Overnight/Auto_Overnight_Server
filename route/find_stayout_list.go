@@ -1,8 +1,9 @@
-package functions
+package route
 
 import (
-	"auto_overnight_api/error_response"
-	"auto_overnight_api/models"
+	"auto_overnight_api/custom_error"
+	"auto_overnight_api/functions"
+	"auto_overnight_api/model"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"net/http"
@@ -13,17 +14,20 @@ import (
 func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// 외박 신청 내역 조회에 필요한 것들 파싱
-	var requestsModel models.FindRequestModel
+	var requestsModel model.FindRequest
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
 	}
 
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.MakeCookieJarError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarError, 500)
 	}
+
+	// cookie jar에 세션 설정
+	functions.MakeCookieJar(requestsModel.Cookies, jar)
 
 	// client에 cookie jar 설정
 	client := &http.Client{
@@ -31,44 +35,44 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	}
 
 	// 학생 이름, 학번 찾기 위한 채널 생성
-	findUserNmChan := make(chan models.FindUserNmModel)
+	findUserNmChan := make(chan model.ResponseModel)
 
 	// 파싱 시작
-	go models.RequestFindUserNm(client, findUserNmChan, requestsModel.Cookies)
+	go functions.RequestFindUserNm(client, findUserNmChan)
 
 	studentInfo := <-findUserNmChan
 
 	if err != nil {
-		return error_response.MakeErrorResponse(err, 500)
+		return custom_error.MakeErrorResponse(err, 500)
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return error_response.MakeErrorResponse(error_response.WrongCookieError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongCookieError, 400)
 	}
 
 	// 외박 신청 내역 조회
-	stayOutList, _, err := models.RequestFindStayOutList(
+	stayOutList := functions.RequestFindStayOutList(
 		client,
 		requestsModel.Year,
 		requestsModel.TmGbn,
 		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
 		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-		requestsModel.Cookies)
+	)
 
 	// 응답 위한 json body 만들기
 	responseBody := make(map[string]interface{})
 
 	// 파싱 시작
-	outStayFrDt, outStayToDt, outStayStGbn := models.ParsingStayoutList(stayOutList)
+	sm := functions.ParsingStayoutList(stayOutList.XML)
 
-	responseBody["outStayFrDt"] = outStayFrDt
-	responseBody["outStayToDt"] = outStayToDt
-	responseBody["outStayStGbn"] = outStayStGbn
+	responseBody["outStayFrDt"] = sm.OutStayFrDt
+	responseBody["outStayToDt"] = sm.OutStayToDt
+	responseBody["outStayStGbn"] = sm.OutStayStGbn
 
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)
 	if err != nil {
-		return error_response.MakeErrorResponse(error_response.MakeJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyError, 500)
 	}
 	response := events.APIGatewayProxyResponse{
 		StatusCode: 200,
