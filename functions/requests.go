@@ -123,8 +123,7 @@ func RequestFindStayOutList(client *http.Client, yy, tmGbn, schregNo, stdKorNm s
 }
 
 // RequestFindPointList 상벌점 내역을 요청하여 가지고 오는 함수
-func RequestFindPointList(client *http.Client,
-	yy, tmGbn, schregNo, stdKorNm string) model.ResponseModel {
+func RequestFindPointList(client *http.Client, yy, tmGbn, schregNo, stdKorNm string) model.ResponseModel {
 
 	// 요청 위한 XML 만들기
 	findPointListXML := model.MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm)
@@ -162,8 +161,7 @@ func RequestFindPointList(client *http.Client,
 }
 
 // RequestSendStayOut 외박 신청하는 함수
-func RequestSendStayOut(client *http.Client,
-	yy, tmGbn, schregNo, stdKorNm string, m model.SendRequest) error {
+func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm string, m model.SendRequest) error {
 
 	// LiveStuNo 찾기 위한 XML 만들기
 	findLiveStuNoXML := model.MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm)
