@@ -31,11 +31,7 @@
 
 ```
 {
-    "cookies": {
-        "JSVSESSIONID": "",
-        "_SSO_Global_Logout_url": "",
-        "kalogin": ""
-    },
+    "cookies": "",
     "name": "이서윤",
     "outStayFrDt": [
         "20220720",
@@ -94,11 +90,7 @@
     "date_list" : ["20210831", "20210901", "20210902", "20210903", "20210904", "20210905"],
     "is_weekend" : [0, 0, 0, 1, 1, 1],
     "outStayAplyDt" : "20210831",
-    "cookies": {
-        "JSVSESSIONID": "",
-        "_SSO_Global_Logout_url": "",
-        "kalogin": ""
-    }
+    "cookies": ""
 }
 ```
 
@@ -169,11 +161,7 @@
     "yy" : "2021",
     "tmGbn" : "2",
     "userNm" : "홍길동",
-    "cookies": {
-        "JSVSESSIONID": "",
-        "_SSO_Global_Logout_url": "",
-        "kalogin": ""
-    }
+    "cookies": ""
 }
 ```
 
@@ -224,11 +212,7 @@
     "yy" : "2022",
     "tmGbn" : "1",
     "userNm" : "이서윤",
-    "cookies": {
-        "JSVSESSIONID": "",
-        "_SSO_Global_Logout_url": "",
-        "kalogin": ""
-    }
+    "cookies": ""
 }
 ```
 * `yy` 년도
