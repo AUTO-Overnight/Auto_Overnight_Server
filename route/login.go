@@ -26,10 +26,16 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		return custom_error.MakeErrorResponse(custom_error.EmptyIdOrPasswordError, 400)
 	}
 
+	// PassWord URIDecode
+	decodeValue, err := url.QueryUnescape(requestsModel.PassWord)
+	if err != nil {
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
+	}
+
 	// x-www-form-urlencoded 방식으로 로그인 하기 위해 form 생성
 	loginInfo := url.Values{
 		"internalId": {requestsModel.Id},
-		"internalPw": {requestsModel.PassWord},
+		"internalPw": {decodeValue},
 		"gubun":      {"inter"},
 	}
 
