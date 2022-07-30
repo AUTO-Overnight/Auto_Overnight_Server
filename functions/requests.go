@@ -189,6 +189,15 @@ func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm strin
 		return custom_error.ParsingXMLBodyError
 	}
 
+	// LiveStuNo 찾기
+	var LiveStuNo string
+
+	for _, col := range liveStuNo.Dataset[0].Rows.Row[0].Col {
+		if col.Id == "livstuNo" {
+			LiveStuNo = col.Data
+		}
+	}
+
 	// 요청한 날짜만큼 외박 신청 보내기
 	var outStayGbn string
 	for i := 0; i < len(m.DateList); i++ {
@@ -204,7 +213,7 @@ func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm strin
 			model.MakeSendStayOutXML(
 				yy,
 				tmGbn,
-				liveStuNo.Dataset[0].Rows.Row[0].Col[12].Data,
+				LiveStuNo,
 				outStayGbn,
 				m.DateList[i],
 				m.DateList[i],
@@ -223,6 +232,7 @@ func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm strin
 
 // send 외박 신청 http request 함수
 func send(sendStayOutXML []byte, client *http.Client) error {
+
 	// 외박 신청 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
