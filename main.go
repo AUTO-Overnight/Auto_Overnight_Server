@@ -24,9 +24,6 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	// 상벌점 조회
 	case "/findpointlist":
 		response, err = route.FindPointList(request)
-	// 잘못된 Path
-	default:
-		response, err = events.APIGatewayProxyResponse{StatusCode: 404}, nil
 	}
 
 	return response, err
