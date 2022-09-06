@@ -21,7 +21,7 @@ var (
 // MakeErrorResponse 에러 응답을 만드는 함수
 func MakeErrorResponse(err error, statusCode int) (events.APIGatewayProxyResponse, error) {
 	body := make(map[string]string)
-	body["custom_err"] = err.Error()
+	body["err"] = err.Error()
 
 	responseJson, _ := json.Marshal(body)
 	response := events.APIGatewayProxyResponse{
