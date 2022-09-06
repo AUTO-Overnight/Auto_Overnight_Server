@@ -17,13 +17,13 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	var requestsModel model.FindRequest
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyErr, 500)
 	}
 
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarErr, 500)
 	}
 
 	// cookie jar에 세션 설정
@@ -47,7 +47,7 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return custom_error.MakeErrorResponse(custom_error.WrongCookieError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongCookieErr, 400)
 	}
 
 	// 상벌점 내역 조회

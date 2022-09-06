@@ -20,16 +20,16 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyErr, 500)
 	}
 	if requestsModel.Id == "" || requestsModel.PassWord == "" {
-		return custom_error.MakeErrorResponse(custom_error.EmptyIdOrPasswordError, 400)
+		return custom_error.MakeErrorResponse(custom_error.EmptyIdOrPasswordErr, 400)
 	}
 
 	// PassWord URIDecode
 	decodeValue, err := url.QueryUnescape(requestsModel.PassWord)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyErr, 500)
 	}
 
 	// x-www-form-urlencoded 방식으로 로그인 하기 위해 form 생성
@@ -42,13 +42,13 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarErr, 500)
 	}
 
 	// 로그인 http request 생성
 	req, err := http.NewRequest("POST", "https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null", bytes.NewBufferString(loginInfo.Encode()))
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeHttpRequestErr, 500)
 	}
 
 	// Content-Type 헤더 설정, client에 cookie jar 설정
@@ -59,7 +59,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	// 로그인 시도
 	res, err := client.Do(req)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.SendHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.SendHttpRequestErr, 500)
 	}
 
 	defer res.Body.Close()
@@ -68,12 +68,12 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	req, err = http.NewRequest("GET", "https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=", nil)
 
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeHttpRequestErr, 500)
 	}
 
 	res, err = client.Do(req)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.SendHttpRequestError, 500)
+		return custom_error.MakeErrorResponse(custom_error.SendHttpRequestErr, 500)
 	}
 
 	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
@@ -92,7 +92,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return custom_error.MakeErrorResponse(custom_error.WrongIdOrPasswordError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongIdOrPasswordErr, 400)
 	}
 
 	// 외박 신청 내역 조회
@@ -128,7 +128,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyErr, 500)
 	}
 	response := events.APIGatewayProxyResponse{
 		StatusCode: 200,

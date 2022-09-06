@@ -18,13 +18,13 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyErr, 500)
 	}
 
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarErr, 500)
 	}
 
 	// client에 cookie jar 설정
@@ -51,7 +51,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return custom_error.MakeErrorResponse(custom_error.WrongCookieError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongCookieErr, 400)
 	}
 
 	// 외박 신청 보내기
@@ -88,7 +88,7 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyErr, 500)
 	}
 	response := events.APIGatewayProxyResponse{
 		StatusCode: 200,

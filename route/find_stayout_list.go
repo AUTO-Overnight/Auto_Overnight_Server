@@ -17,13 +17,13 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	var requestsModel model.FindRequest
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyErr, 500)
 	}
 
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarErr, 500)
 	}
 
 	// cookie jar에 세션 설정
@@ -47,7 +47,7 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return custom_error.MakeErrorResponse(custom_error.WrongCookieError, 400)
+		return custom_error.MakeErrorResponse(custom_error.WrongCookieErr, 400)
 	}
 
 	// 외박 신청 내역 조회
@@ -72,7 +72,7 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 	// 응답 json 만들기
 	responseJson, err := json.Marshal(responseBody)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyError, 500)
+		return custom_error.MakeErrorResponse(custom_error.MakeJsonBodyErr, 500)
 	}
 	response := events.APIGatewayProxyResponse{
 		StatusCode: 200,
