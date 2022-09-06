@@ -1,7 +1,7 @@
 package route
 
 import (
-	"auto_overnight_api/custom_error"
+	"auto_overnight_api/custom_err"
 	"auto_overnight_api/functions"
 	"auto_overnight_api/model"
 	"encoding/json"
@@ -17,13 +17,13 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	var requestsModel model.FindRequest
 	err := json.Unmarshal([]byte(request.Body), &requestsModel)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.ParsingJsonBodyErr, 500)
+		return custom_err.MakeErrorResponse(custom_err.ParsingJsonBodyErr, 500)
 	}
 
 	// cookie jar 생성
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return custom_error.MakeErrorResponse(custom_error.MakeCookieJarErr, 500)
+		return custom_err.MakeErrorResponse(custom_err.MakeCookieJarErr, 500)
 	}
 
 	// cookie jar에 세션 설정
@@ -43,11 +43,11 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	studentInfo := <-findUserNmChan
 
 	if studentInfo.Error != nil {
-		return custom_error.MakeErrorResponse(err, 500)
+		return custom_err.MakeErrorResponse(err, 500)
 	}
 
 	if studentInfo.XML.Parameters.Parameter == "-600" {
-		return custom_error.MakeErrorResponse(custom_error.WrongCookieErr, 400)
+		return custom_err.MakeErrorResponse(custom_err.WrongCookieErr, 400)
 	}
 
 	// 상벌점 내역 조회
@@ -59,7 +59,7 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
 	)
 	if err != nil {
-		return custom_error.MakeErrorResponse(err, 500)
+		return custom_err.MakeErrorResponse(err, 500)
 	}
 
 	// 응답 위한 json body 만들기

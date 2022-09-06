@@ -1,7 +1,7 @@
 package functions
 
 import (
-	"auto_overnight_api/custom_error"
+	"auto_overnight_api/custom_err"
 	"auto_overnight_api/model"
 	"bytes"
 	"encoding/xml"
@@ -21,14 +21,14 @@ func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.Response
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findYyTmGbnList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(model.FindYYtmgbnXML))
 	if err != nil {
-		response.Error = custom_error.MakeHttpRequestErr
+		response.Error = custom_err.MakeHttpRequestErr
 		findYYtmgbnChan <- response
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		response.Error = custom_error.SendHttpRequestErr
+		response.Error = custom_err.SendHttpRequestErr
 		findYYtmgbnChan <- response
 	}
 
@@ -38,7 +38,7 @@ func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.Response
 	err = xml.Unmarshal(body, &yytmGbnInfo)
 
 	if err != nil {
-		response.Error = custom_error.ParsingXMLBodyErr
+		response.Error = custom_err.ParsingXMLBodyErr
 		findYYtmgbnChan <- response
 	}
 
@@ -58,14 +58,14 @@ func RequestFindUserNm(client *http.Client, findUserNmChan chan model.ResponseMo
 		"https://dream.tukorea.ac.kr/com/SsoCtr/findMyGLIOList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(model.FindUserNmXML))
 	if err != nil {
-		response.Error = custom_error.MakeHttpRequestErr
+		response.Error = custom_err.MakeHttpRequestErr
 		findUserNmChan <- response
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		response.Error = custom_error.SendHttpRequestErr
+		response.Error = custom_err.SendHttpRequestErr
 		findUserNmChan <- response
 	}
 
@@ -75,7 +75,7 @@ func RequestFindUserNm(client *http.Client, findUserNmChan chan model.ResponseMo
 	err = xml.Unmarshal(body, &studentInfo)
 
 	if err != nil {
-		response.Error = custom_error.ParsingXMLBodyErr
+		response.Error = custom_err.ParsingXMLBodyErr
 		findUserNmChan <- response
 	}
 
@@ -98,14 +98,14 @@ func RequestFindStayOutList(client *http.Client, yy, tmGbn, schregNo, stdKorNm s
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findStayAplyList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(findLiveStuNoXML))
 	if err != nil {
-		temp.Error = custom_error.MakeHttpRequestErr
+		temp.Error = custom_err.MakeHttpRequestErr
 		return temp
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		temp.Error = custom_error.SendHttpRequestErr
+		temp.Error = custom_err.SendHttpRequestErr
 		return temp
 	}
 
@@ -113,7 +113,7 @@ func RequestFindStayOutList(client *http.Client, yy, tmGbn, schregNo, stdKorNm s
 	body, _ := ioutil.ReadAll(res.Body)
 	err = xml.Unmarshal(body, &temp.XML)
 	if err != nil {
-		temp.Error = custom_error.ParsingXMLBodyErr
+		temp.Error = custom_err.ParsingXMLBodyErr
 		return temp
 	}
 
@@ -137,14 +137,14 @@ func RequestFindPointList(client *http.Client, yy, tmGbn, schregNo, stdKorNm str
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findFindArdListList.do?menuId=MPB0024&pgmId=PPB0023",
 		bytes.NewBuffer(findPointListXML))
 	if err != nil {
-		temp.Error = custom_error.MakeHttpRequestErr
+		temp.Error = custom_err.MakeHttpRequestErr
 		return temp
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		temp.Error = custom_error.SendHttpRequestErr
+		temp.Error = custom_err.SendHttpRequestErr
 		return temp
 	}
 
@@ -152,7 +152,7 @@ func RequestFindPointList(client *http.Client, yy, tmGbn, schregNo, stdKorNm str
 	body, _ := ioutil.ReadAll(res.Body)
 	err = xml.Unmarshal(body, &temp.XML)
 	if err != nil {
-		temp.Error = custom_error.ParsingXMLBodyErr
+		temp.Error = custom_err.ParsingXMLBodyErr
 		return temp
 	}
 
@@ -172,13 +172,13 @@ func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm strin
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findMdstrmLeaveAplyList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(findLiveStuNoXML))
 	if err != nil {
-		return custom_error.MakeHttpRequestErr
+		return custom_err.MakeHttpRequestErr
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
-		return custom_error.SendHttpRequestErr
+		return custom_err.SendHttpRequestErr
 	}
 
 	// body 읽어서 구조체에 저장
@@ -186,7 +186,7 @@ func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm strin
 	var liveStuNo model.Root
 	err = xml.Unmarshal(body, &liveStuNo)
 	if err != nil {
-		return custom_error.ParsingXMLBodyErr
+		return custom_err.ParsingXMLBodyErr
 	}
 
 	// LiveStuNo 찾기
@@ -239,13 +239,13 @@ func send(sendStayOutXML []byte, client *http.Client) error {
 		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021",
 		bytes.NewBuffer(sendStayOutXML))
 	if err != nil {
-		return custom_error.MakeHttpRequestErr
+		return custom_err.MakeHttpRequestErr
 	}
 
 	// http request 보내기
 	_, err = client.Do(req)
 	if err != nil {
-		return custom_error.SendHttpRequestErr
+		return custom_err.SendHttpRequestErr
 	}
 
 	return nil
