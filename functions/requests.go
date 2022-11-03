@@ -10,7 +10,7 @@ import (
 )
 
 // RequestFindYYtmgbn 해당 년도, 학기를 요청하여 가져오는 함수
-func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.ResponseModel) {
+func RequestFindYYtmgbn(client *http.Client) model.ResponseModel {
 
 	// 채널로 보낼 응답용 구조체 생성
 	var response model.ResponseModel
@@ -22,14 +22,14 @@ func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.Response
 		bytes.NewBuffer(model.FindYYtmgbnXML))
 	if err != nil {
 		response.Error = custom_err.MakeHttpRequestErr
-		findYYtmgbnChan <- response
+		return response
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
 		response.Error = custom_err.SendHttpRequestErr
-		findYYtmgbnChan <- response
+		return response
 	}
 
 	// body 읽어서 구조체 저장
@@ -39,15 +39,15 @@ func RequestFindYYtmgbn(client *http.Client, findYYtmgbnChan chan model.Response
 
 	if err != nil {
 		response.Error = custom_err.ParsingXMLBodyErr
-		findYYtmgbnChan <- response
+		return response
 	}
 
 	response.XML = yytmGbnInfo
-	findYYtmgbnChan <- response
+	return response
 }
 
 // RequestFindUserNm 학생의 이름, 학번을 요청하여 가져오는 함수
-func RequestFindUserNm(client *http.Client, findUserNmChan chan model.ResponseModel) {
+func RequestFindUserNm(client *http.Client) model.ResponseModel {
 
 	// 채널로 보낼 응답용 구조체 생성
 	var response model.ResponseModel
@@ -59,14 +59,14 @@ func RequestFindUserNm(client *http.Client, findUserNmChan chan model.ResponseMo
 		bytes.NewBuffer(model.FindUserNmXML))
 	if err != nil {
 		response.Error = custom_err.MakeHttpRequestErr
-		findUserNmChan <- response
+		return response
 	}
 
 	// http request 보내기
 	res, err := client.Do(req)
 	if err != nil {
 		response.Error = custom_err.SendHttpRequestErr
-		findUserNmChan <- response
+		return response
 	}
 
 	// body 읽어서 구조체 저장
@@ -76,11 +76,11 @@ func RequestFindUserNm(client *http.Client, findUserNmChan chan model.ResponseMo
 
 	if err != nil {
 		response.Error = custom_err.ParsingXMLBodyErr
-		findUserNmChan <- response
+		return response
 	}
 
 	response.XML = studentInfo
-	findUserNmChan <- response
+	return response
 }
 
 // RequestFindStayOutList 외박 신청 내역을 요청하여 가지고 오는 함수

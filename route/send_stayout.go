@@ -35,16 +35,9 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	// cookie jar에 세션 설정
 	functions.MakeCookieJar(requestsModel.Cookies, jar)
 
-	// 학생 이름, 학번, 년도, 학기 찾기 위한 채널 생성
-	findUserNmChan := make(chan model.ResponseModel)
-	findYYtmgbnChan := make(chan model.ResponseModel)
-
 	// 파싱 시작
-	go functions.RequestFindUserNm(client, findUserNmChan)
-	go functions.RequestFindYYtmgbn(client, findYYtmgbnChan)
-
-	studentInfo := <-findUserNmChan
-	yytmGbnInfo := <-findYYtmgbnChan
+	studentInfo := functions.RequestFindUserNm(client)
+	yytmGbnInfo := functions.RequestFindYYtmgbn(client)
 
 	if studentInfo.Error != nil || yytmGbnInfo.Error != nil {
 		return custom_err.MakeErrorResponse(err, 500)

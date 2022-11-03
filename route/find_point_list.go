@@ -34,13 +34,8 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		Jar: jar,
 	}
 
-	// 학생 이름, 학번 찾기 위한 채널 생성
-	findUserNmChan := make(chan model.ResponseModel)
-
 	// 파싱 시작
-	go functions.RequestFindUserNm(client, findUserNmChan)
-
-	studentInfo := <-findUserNmChan
+	studentInfo := functions.RequestFindUserNm(client)
 
 	if studentInfo.Error != nil {
 		return custom_err.MakeErrorResponse(err, 500)
