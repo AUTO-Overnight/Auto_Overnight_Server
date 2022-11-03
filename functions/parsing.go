@@ -8,16 +8,16 @@ import (
 )
 
 // ParsingStayoutList 외박 신청 내역 파싱하는 함수
-func ParsingStayoutList(stayOutList model.Root) model.StayOutList {
+func ParsingStayoutList(stayOutList model.ResponseModel) model.StayOutList {
 	// 모델 생성
 	var m model.StayOutList
 	// 외박 신청 내역 파싱 내역 저장 위한 슬라이스 생성
-	m.OutStayFrDt = make([]string, len(stayOutList.Dataset[1].Rows.Row))
-	m.OutStayToDt = make([]string, len(stayOutList.Dataset[1].Rows.Row))
-	m.OutStayStGbn = make([]string, len(stayOutList.Dataset[1].Rows.Row))
+	m.OutStayFrDt = make([]string, len(stayOutList.XML.Dataset[1].Rows.Row))
+	m.OutStayToDt = make([]string, len(stayOutList.XML.Dataset[1].Rows.Row))
+	m.OutStayStGbn = make([]string, len(stayOutList.XML.Dataset[1].Rows.Row))
 
 	// 파싱 시작
-	for i, v := range stayOutList.Dataset[1].Rows.Row {
+	for i, v := range stayOutList.XML.Dataset[1].Rows.Row {
 		m.OutStayFrDt[i] = v.Col[2].Data
 		m.OutStayToDt[i] = v.Col[1].Data
 		m.OutStayStGbn[i] = v.Col[5].Data
@@ -42,17 +42,17 @@ func ParsingCookies(client *http.Client) string {
 }
 
 // ParsingPointList 상벌점 내역 파싱하는 함수
-func ParsingPointList(pointList model.Root) model.PointList {
+func ParsingPointList(pointList model.ResponseModel) model.PointList {
 	// 모델 생성
 	var m model.PointList
 	// 상벌점 내역 파싱 위한 슬라이스 생성
-	m.CmpScr = make([]string, len(pointList.Dataset[0].Rows.Row))
-	m.LifSstArdGbn = make([]string, len(pointList.Dataset[0].Rows.Row))
-	m.ArdInptDt = make([]string, len(pointList.Dataset[0].Rows.Row))
-	m.LifSstArdCtnt = make([]string, len(pointList.Dataset[0].Rows.Row))
+	m.CmpScr = make([]string, len(pointList.XML.Dataset[0].Rows.Row))
+	m.LifSstArdGbn = make([]string, len(pointList.XML.Dataset[0].Rows.Row))
+	m.ArdInptDt = make([]string, len(pointList.XML.Dataset[0].Rows.Row))
+	m.LifSstArdCtnt = make([]string, len(pointList.XML.Dataset[0].Rows.Row))
 
 	// 파싱 시작
-	for i, v := range pointList.Dataset[0].Rows.Row {
+	for i, v := range pointList.XML.Dataset[0].Rows.Row {
 		m.CmpScr[i] = v.Col[4].Data
 		m.LifSstArdGbn[i] = v.Col[8].Data
 		m.ArdInptDt[i] = v.Col[10].Data

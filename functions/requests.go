@@ -84,10 +84,10 @@ func RequestFindUserNm(client *http.Client) model.ResponseModel {
 }
 
 // RequestFindStayOutList 외박 신청 내역을 요청하여 가지고 오는 함수
-func RequestFindStayOutList(client *http.Client, yy, tmGbn, schregNo, stdKorNm string) model.ResponseModel {
+func RequestFindStayOutList(client *http.Client, info model.RequestInfo) model.ResponseModel {
 
 	// 요청 위한 XML 만들기
-	findLiveStuNoXML := model.MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm)
+	findLiveStuNoXML := model.MakefindLiveStuNoXML(info.YY, info.TmGbn, info.SchregNo, info.StdKorNm)
 
 	// 응답 저장 위한 구조체
 	var temp model.ResponseModel
@@ -123,10 +123,10 @@ func RequestFindStayOutList(client *http.Client, yy, tmGbn, schregNo, stdKorNm s
 }
 
 // RequestFindPointList 상벌점 내역을 요청하여 가지고 오는 함수
-func RequestFindPointList(client *http.Client, yy, tmGbn, schregNo, stdKorNm string) model.ResponseModel {
+func RequestFindPointList(client *http.Client, info model.RequestInfo) model.ResponseModel {
 
 	// 요청 위한 XML 만들기
-	findPointListXML := model.MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm)
+	findPointListXML := model.MakefindLiveStuNoXML(info.YY, info.TmGbn, info.SchregNo, info.StdKorNm)
 
 	// 응답 저장 위한 구조체
 	var temp model.ResponseModel
@@ -161,10 +161,10 @@ func RequestFindPointList(client *http.Client, yy, tmGbn, schregNo, stdKorNm str
 }
 
 // RequestSendStayOut 외박 신청하는 함수
-func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm string, m model.SendRequest) error {
+func RequestSendStayOut(client *http.Client, info model.RequestInfo, m model.SendRequest) error {
 
 	// LiveStuNo 찾기 위한 XML 만들기
-	findLiveStuNoXML := model.MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm)
+	findLiveStuNoXML := model.MakefindLiveStuNoXML(info.YY, info.TmGbn, info.SchregNo, info.StdKorNm)
 
 	// LiveStuNo 찾기 위한 http request 만들기
 	req, err := http.NewRequest(
@@ -211,8 +211,8 @@ func RequestSendStayOut(client *http.Client, yy, tmGbn, schregNo, stdKorNm strin
 
 		err = send(
 			model.MakeSendStayOutXML(
-				yy,
-				tmGbn,
+				info.YY,
+				info.TmGbn,
 				LiveStuNo,
 				outStayGbn,
 				m.DateList[i],
