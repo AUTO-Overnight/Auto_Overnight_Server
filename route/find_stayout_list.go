@@ -45,20 +45,21 @@ func FindStayOutList(request events.APIGatewayProxyRequest) (events.APIGatewayPr
 		return custom_err.MakeErrorResponse(custom_err.WrongCookieErr, 400)
 	}
 
+	requestInfo := model.RequestInfo{
+		YY:       requestsModel.Year,
+		TmGbn:    requestsModel.TmGbn,
+		SchregNo: studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		StdKorNm: studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+	}
+
 	// 외박 신청 내역 조회
-	stayOutList := functions.RequestFindStayOutList(
-		client,
-		requestsModel.Year,
-		requestsModel.TmGbn,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-	)
+	stayOutList := functions.RequestFindStayOutList(client, requestInfo)
 
 	// 응답 위한 json body 만들기
 	responseBody := make(map[string]interface{})
 
 	// 파싱 시작
-	sm := functions.ParsingStayoutList(stayOutList.XML)
+	sm := functions.ParsingStayoutList(stayOutList)
 
 	responseBody["outStayFrDt"] = sm.OutStayFrDt
 	responseBody["outStayToDt"] = sm.OutStayToDt

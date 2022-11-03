@@ -88,14 +88,15 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		return custom_err.MakeErrorResponse(custom_err.WrongIdOrPasswordErr, 400)
 	}
 
+	requestInfo := model.RequestInfo{
+		YY:       yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+		TmGbn:    yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		SchregNo: studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		StdKorNm: studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+	}
+
 	// 외박 신청 내역 조회
-	stayOutList := functions.RequestFindStayOutList(
-		client,
-		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-	)
+	stayOutList := functions.RequestFindStayOutList(client, requestInfo)
 
 	if stayOutList.Error != nil {
 		return custom_err.MakeErrorResponse(err, 500)
@@ -110,7 +111,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	responseBody["tmGbn"] = yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data
 
 	// 파싱 시작
-	sm := functions.ParsingStayoutList(stayOutList.XML)
+	sm := functions.ParsingStayoutList(stayOutList)
 	cookie := functions.ParsingCookies(client)
 
 	responseBody["cookies"] = cookie

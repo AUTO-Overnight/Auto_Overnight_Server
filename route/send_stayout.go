@@ -47,32 +47,27 @@ func SendStayOut(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 		return custom_err.MakeErrorResponse(custom_err.WrongCookieErr, 400)
 	}
 
+	requestInfo := model.RequestInfo{
+		YY:       yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+		TmGbn:    yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		SchregNo: studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		StdKorNm: studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+	}
+
 	// 외박 신청 보내기
-	err = functions.RequestSendStayOut(
-		client,
-		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-		requestsModel)
+	err = functions.RequestSendStayOut(client, requestInfo, requestsModel)
 	if err != nil {
 		return custom_err.MakeErrorResponse(err, 500)
 	}
 
 	// 외박 신청 내역 조회
-	stayOutList := functions.RequestFindStayOutList(
-		client,
-		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-		yytmGbnInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-	)
+	stayOutList := functions.RequestFindStayOutList(client, requestInfo)
 
 	// 응답 위한 json body 만들기
 	responseBody := make(map[string]interface{})
 
 	// 파싱 시작
-	sm := functions.ParsingStayoutList(stayOutList.XML)
+	sm := functions.ParsingStayoutList(stayOutList)
 
 	responseBody["outStayFrDt"] = sm.OutStayFrDt
 	responseBody["outStayToDt"] = sm.OutStayToDt

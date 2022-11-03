@@ -45,14 +45,15 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		return custom_err.MakeErrorResponse(custom_err.WrongCookieErr, 400)
 	}
 
+	requestInfo := model.RequestInfo{
+		YY:       requestsModel.Year,
+		TmGbn:    requestsModel.TmGbn,
+		SchregNo: studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
+		StdKorNm: studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
+	}
+
 	// 상벌점 내역 조회
-	pointList := functions.RequestFindPointList(
-		client,
-		requestsModel.Year,
-		requestsModel.TmGbn,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[1].Data,
-		studentInfo.XML.Dataset[0].Rows.Row[0].Col[0].Data,
-	)
+	pointList := functions.RequestFindPointList(client, requestInfo)
 	if err != nil {
 		return custom_err.MakeErrorResponse(err, 500)
 	}
@@ -61,7 +62,7 @@ func FindPointList(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	responseBody := make(map[string]interface{})
 
 	// 파싱 시작
-	pm := functions.ParsingPointList(pointList.XML)
+	pm := functions.ParsingPointList(pointList)
 
 	responseBody["cmpScr"] = pm.CmpScr
 	responseBody["lifSstArdGbn"] = pm.LifSstArdGbn
