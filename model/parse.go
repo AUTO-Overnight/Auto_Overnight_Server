@@ -14,3 +14,11 @@ type PointList struct {
 	ArdInptDt     []string
 	LifSstArdCtnt []string
 }
+
+// RequestInfo request 보내기 위한 년, 학기, 학생 정보 구조체
+type RequestInfo struct {
+	YY       string
+	TmGbn    string
+	SchregNo string
+	StdKorNm string
+}
