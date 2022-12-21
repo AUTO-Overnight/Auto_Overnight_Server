@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"auto_overnight_api/config"
 	"auto_overnight_api/model"
 	"net/http"
 	"net/http/cookiejar"
@@ -29,7 +30,7 @@ func ParsingStayoutList(stayOutList model.ResponseModel) model.StayOutList {
 // ParsingCookies 쿠키 파싱하는 함수
 func ParsingCookies(client *http.Client) string {
 	// url 파싱
-	u, _ := url.Parse("https://dream.tukorea.ac.kr/")
+	u, _ := url.Parse(config.SchoolUrl)
 	var value string
 
 	// JSVSESSIONID 찾기
@@ -65,7 +66,7 @@ func ParsingPointList(pointList model.ResponseModel) model.PointList {
 // MakeCookieJar cookiejar에 쿠키를 설정해주는 함수
 func MakeCookieJar(s string, jar *cookiejar.Jar) {
 	// url 파싱
-	u, _ := url.Parse("https://dream.tukorea.ac.kr/")
+	u, _ := url.Parse(config.SchoolUrl)
 
 	// JSVSESSIONID 쿠키 생성
 	cookie := make([]*http.Cookie, 1)

@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"auto_overnight_api/config"
 	"auto_overnight_api/custom_err"
 	"auto_overnight_api/model"
 	"bytes"
@@ -18,7 +19,7 @@ func RequestFindYYtmgbn(client *http.Client) model.ResponseModel {
 	// http request 생성
 	req, err := http.NewRequest(
 		"POST",
-		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findYyTmGbnList.do?menuId=MPB0022&pgmId=PPB0021",
+		config.YearSemesterUrl,
 		bytes.NewBuffer(model.FindYYtmgbnXML))
 	if err != nil {
 		response.Error = custom_err.MakeHttpRequestErr
@@ -55,7 +56,7 @@ func RequestFindUserNm(client *http.Client) model.ResponseModel {
 	// http request 생성
 	req, err := http.NewRequest(
 		"POST",
-		"https://dream.tukorea.ac.kr/com/SsoCtr/findMyGLIOList.do?menuId=MPB0022&pgmId=PPB0021",
+		config.NameIdUrl,
 		bytes.NewBuffer(model.FindUserNmXML))
 	if err != nil {
 		response.Error = custom_err.MakeHttpRequestErr
@@ -95,7 +96,7 @@ func RequestFindStayOutList(client *http.Client, info model.RequestInfo) model.R
 	// 외박 신청 내역 조회를 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
-		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findStayAplyList.do?menuId=MPB0022&pgmId=PPB0021",
+		config.ApplyListUrl,
 		bytes.NewBuffer(findLiveStuNoXML))
 	if err != nil {
 		temp.Error = custom_err.MakeHttpRequestErr
@@ -134,7 +135,7 @@ func RequestFindPointList(client *http.Client, info model.RequestInfo) model.Res
 	// 상벌점 내역 조회를 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
-		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findFindArdListList.do?menuId=MPB0024&pgmId=PPB0023",
+		config.RewardListUrl,
 		bytes.NewBuffer(findPointListXML))
 	if err != nil {
 		temp.Error = custom_err.MakeHttpRequestErr
@@ -169,7 +170,7 @@ func RequestSendStayOut(client *http.Client, info model.RequestInfo, m model.Sen
 	// LiveStuNo 찾기 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
-		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/findMdstrmLeaveAplyList.do?menuId=MPB0022&pgmId=PPB0021",
+		config.DormStuIdUrl,
 		bytes.NewBuffer(findLiveStuNoXML))
 	if err != nil {
 		return custom_err.MakeHttpRequestErr
@@ -236,7 +237,7 @@ func send(sendStayOutXML []byte, client *http.Client) error {
 	// 외박 신청 위한 http request 만들기
 	req, err := http.NewRequest(
 		"POST",
-		"https://dream.tukorea.ac.kr/aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021",
+		config.SendApplyUrl,
 		bytes.NewBuffer(sendStayOutXML))
 	if err != nil {
 		return custom_err.MakeHttpRequestErr
