@@ -1,7 +1,5 @@
 package model
 
-import "fmt"
-
 var (
 	// FindYYtmgbnXML 년도, 학기 찾기 위한 XML
 	FindYYtmgbnXML = []byte(`<?model version="1.0" encoding="UTF-8"?>
@@ -30,11 +28,9 @@ var (
 					<Parameter id="requestTimeStr">1627027228674</Parameter>
 				</Parameters>
 			</Root>`)
-)
 
-// MakefindLiveStuNoXML LiveStuNo 찾기 위한 XML 만드는 함수
-func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
-	return []byte(fmt.Sprintf(`<?model version="1.0" encoding="UTF-8"?>
+	// FindLiveStuNoXML 기숙사 학생 번호 찾기 위한 XML
+	FindLiveStuNoXML = `<?model version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
             <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -59,13 +55,10 @@ func MakefindLiveStuNoXML(yy, tmGbn, schregNo, stdKorNm string) []byte {
                 </Row>
             </Rows>
         </Dataset>
-    </Root>`,
-		yy, tmGbn, schregNo, stdKorNm))
-}
+    </Root>`
 
-// MakeSendStayOutXML 외박 신청 위한 XML 만드는 함수
-func MakeSendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToDt, outStayAplyDt string) []byte {
-	return []byte(fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+	// SendStayOutXML 외박 신청을 위한 XML
+	SendStayOutXML = `<?xml version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
             <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -103,14 +96,5 @@ func MakeSendStayOutXML(yy, tmGbn, livstuNo, outStayGbn, outStayFrDt, outStayToD
                 </Row>
             </Rows>
         </Dataset>
-    </Root>`,
-		yy,
-		tmGbn,
-		livstuNo,
-		outStayGbn,
-		outStayFrDt,
-		outStayToDt,
-		outStayAplyDt,
-	))
-
-}
+    </Root>`
+)
