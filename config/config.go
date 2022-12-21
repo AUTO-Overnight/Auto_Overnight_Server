@@ -1,7 +1,12 @@
 package config
 
 var (
-	SchoolUrl       = "https://dream.tukorea.ac.kr/"
+	LoginUrl = "https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null"
+
+	SchoolUrl = "https://dream.tukorea.ac.kr/"
+
+	SessionUrl = SchoolUrl + "com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo="
+
 	YearSemesterUrl = SchoolUrl + "aff/dorm/DormCtr/findYyTmGbnList.do?menuId=MPB0022&pgmId=PPB0021"
 	NameIdUrl       = SchoolUrl + "com/SsoCtr/findMyGLIOList.do?menuId=MPB0022&pgmId=PPB0021"
 	ApplyListUrl    = SchoolUrl + "aff/dorm/DormCtr/findStayAplyList.do?menuId=MPB0022&pgmId=PPB0021"

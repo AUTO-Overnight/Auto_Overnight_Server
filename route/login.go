@@ -1,6 +1,7 @@
 package route
 
 import (
+	"auto_overnight_api/config"
 	"auto_overnight_api/custom_err"
 	"auto_overnight_api/functions"
 	"auto_overnight_api/model"
@@ -46,7 +47,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	}
 
 	// 로그인 http request 생성
-	req, err := http.NewRequest("POST", "https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null", bytes.NewBufferString(loginInfo.Encode()))
+	req, err := http.NewRequest("POST", config.LoginUrl, bytes.NewBufferString(loginInfo.Encode()))
 	if err != nil {
 		return custom_err.MakeErrorResponse(custom_err.MakeHttpRequestErr, 500)
 	}
@@ -65,7 +66,7 @@ func Login(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	defer res.Body.Close()
 
 	// 통합 정보 시스템 세션 얻기 시도
-	req, err = http.NewRequest("GET", "https://dream.tukorea.ac.kr/com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=", nil)
+	req, err = http.NewRequest("GET", config.SessionUrl, nil)
 
 	if err != nil {
 		return custom_err.MakeErrorResponse(custom_err.MakeHttpRequestErr, 500)
