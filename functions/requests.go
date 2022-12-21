@@ -88,7 +88,7 @@ func RequestFindUserNm(client *http.Client) model.ResponseModel {
 func RequestFindStayOutList(client *http.Client, info model.RequestInfo) model.ResponseModel {
 
 	// 요청 위한 XML 만들기
-	findLiveStuNoXML := model.MakefindLiveStuNoXML(info.YY, info.TmGbn, info.SchregNo, info.StdKorNm)
+	findLiveStuNoXML := model.MakefindLiveStuNoXML(info)
 
 	// 응답 저장 위한 구조체
 	var temp model.ResponseModel
@@ -127,7 +127,7 @@ func RequestFindStayOutList(client *http.Client, info model.RequestInfo) model.R
 func RequestFindPointList(client *http.Client, info model.RequestInfo) model.ResponseModel {
 
 	// 요청 위한 XML 만들기
-	findPointListXML := model.MakefindLiveStuNoXML(info.YY, info.TmGbn, info.SchregNo, info.StdKorNm)
+	findPointListXML := model.MakefindLiveStuNoXML(info)
 
 	// 응답 저장 위한 구조체
 	var temp model.ResponseModel
@@ -165,7 +165,7 @@ func RequestFindPointList(client *http.Client, info model.RequestInfo) model.Res
 func RequestSendStayOut(client *http.Client, info model.RequestInfo, m model.SendRequest) error {
 
 	// LiveStuNo 찾기 위한 XML 만들기
-	findLiveStuNoXML := model.MakefindLiveStuNoXML(info.YY, info.TmGbn, info.SchregNo, info.StdKorNm)
+	findLiveStuNoXML := model.MakefindLiveStuNoXML(info)
 
 	// LiveStuNo 찾기 위한 http request 만들기
 	req, err := http.NewRequest(
@@ -210,18 +210,16 @@ func RequestSendStayOut(client *http.Client, info model.RequestInfo, m model.Sen
 			outStayGbn = "04"
 		}
 
-		err = send(
-			model.MakeSendStayOutXML(
-				info.YY,
-				info.TmGbn,
-				LiveStuNo,
-				outStayGbn,
-				m.DateList[i],
-				m.DateList[i],
-				m.OutStayAplyDt,
-			),
-			client,
+		sendStayOutXML := model.MakeSendStayOutXML(
+			info,
+			LiveStuNo,
+			outStayGbn,
+			m.DateList[i],
+			m.DateList[i],
+			m.OutStayAplyDt,
 		)
+
+		err = send(sendStayOutXML, client)
 
 		if err != nil {
 			return err
