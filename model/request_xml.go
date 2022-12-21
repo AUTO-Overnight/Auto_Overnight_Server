@@ -2,7 +2,7 @@ package model
 
 var (
 	// FindYYtmgbnXML 년도, 학기 찾기 위한 XML
-	FindYYtmgbnXML = []byte(`<?model version="1.0" encoding="UTF-8"?>
+	FindYYtmgbnXML = `<?model version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -18,16 +18,15 @@ var (
 			</Row>
 		</Rows>
 	</Dataset>
-</Root>`)
+</Root>`
 	// FindUserNmXML 이름, 학번 찾기 위한 XML
-	FindUserNmXML = []byte(
-		`<?model version="1.0" encoding="UTF-8"?>
+	FindUserNmXML = `<?model version="1.0" encoding="UTF-8"?>
 			<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 				<Parameters>
 					<Parameter id="columnList">persNo|userNm</Parameter>
 					<Parameter id="requestTimeStr">1627027228674</Parameter>
 				</Parameters>
-			</Root>`)
+			</Root>`
 
 	// FindLiveStuNoXML 기숙사 학생 번호 찾기 위한 XML
 	FindLiveStuNoXML = `<?model version="1.0" encoding="UTF-8"?>

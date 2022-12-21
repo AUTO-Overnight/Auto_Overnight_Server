@@ -20,7 +20,8 @@ func RequestFindYYtmgbn(client *http.Client) model.ResponseModel {
 	req, err := http.NewRequest(
 		"POST",
 		config.YearSemesterUrl,
-		bytes.NewBuffer(model.FindYYtmgbnXML))
+		bytes.NewBuffer([]byte(model.FindYYtmgbnXML)),
+	)
 	if err != nil {
 		response.Error = custom_err.MakeHttpRequestErr
 		return response
@@ -57,7 +58,8 @@ func RequestFindUserNm(client *http.Client) model.ResponseModel {
 	req, err := http.NewRequest(
 		"POST",
 		config.NameIdUrl,
-		bytes.NewBuffer(model.FindUserNmXML))
+		bytes.NewBuffer([]byte(model.FindUserNmXML)),
+	)
 	if err != nil {
 		response.Error = custom_err.MakeHttpRequestErr
 		return response
