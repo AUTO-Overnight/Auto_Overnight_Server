@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CustomLogger } from './infra/logging/custom-logger';
+import { schoolUrl } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

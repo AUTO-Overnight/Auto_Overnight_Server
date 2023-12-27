@@ -1,4 +1,5 @@
 import { Controller } from '@nestjs/common';
+import { schoolUrl } from '../config';
 
 @Controller('stay-out')
 export class StayOutController {
