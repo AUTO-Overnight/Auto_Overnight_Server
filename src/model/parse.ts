@@ -5,7 +5,6 @@ interface StayOutList {
   OutStayStGbn: string[];
 }
 
-// PointList Structure to parse and store reward/punishment details
 interface PointList {
   CmpScr: string[];
   LifSstArdGbn: string[];
@@ -13,7 +12,6 @@ interface PointList {
   LifSstArdCtnt: string[];
 }
 
-// Structure to store year, semester, student number, and student name for sending RequestInfo request
 interface RequestInfo {
   YY: string;
   TmGbn: string;
