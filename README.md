@@ -1,7 +1,6 @@
 # ⚡ Auto_Overnight_API
 
-- 외박 신청 및 로그인 등 여러 요청을 처리하는 API입니다.
-- nodejs -> golang으로 변경하여 AWS lambda에 배포중입니다.
+- nestjs 마이그레이션 진행 중
 
 ## Build
 `GOARCH=amd64 GOOS=linux go build` 후에 생긴 바이너리파일을 zip로 압축해 aws lambda에 업로드합니다
