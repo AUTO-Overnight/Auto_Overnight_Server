@@ -1,4 +1,4 @@
 // GlobalException
 export class GlobalExceptionCode {
-  static UnCached = 'G0000';
+  static UnCatched = 'G0000';
 }

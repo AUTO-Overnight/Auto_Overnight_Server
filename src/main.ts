@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CustomLogger } from './infra/logging/custom-logger';
-import dotenv = require('dotenv');
+import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 // env설정
@@ -22,6 +22,6 @@ async function bootstrap() {
   app.enableCors();
   app.useLogger(app.get(CustomLogger));
   app.useGlobalFilters(app.get('GLOBAL_EXCEPTION_FILTER'));
-  await app.listen(process.env.NEST_PORT); //TODO 변경
+  await app.listen(process.env.NEST_PORT || 8000);
 }
 bootstrap();
