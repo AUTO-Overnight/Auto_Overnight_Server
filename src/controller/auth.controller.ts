@@ -1,14 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { BaseException } from '../global/error/exception/base.exception';
-import { GlobalExceptionCode } from '../global/error/exception-code';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { LoginResDto } from '../domain/auth/dto/response/login-res.dto';
+import { LoginReqDto } from '../domain/auth/dto/request/login-req.dto';
+import { AuthService } from '../domain/auth/auth.service';
 
 @Controller('/api/v1/auth')
 export class AuthController {
-  constructor() {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Get()
-  getHello(): string {
-    throw new Error('test');
-    return 'Hello World!';
+  @Post('login')
+  async login(@Body() dto: LoginReqDto): Promise<LoginResDto> {
+    return this.authService.login(dto);
   }
 }
