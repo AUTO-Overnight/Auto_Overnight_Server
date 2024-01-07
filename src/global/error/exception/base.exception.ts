@@ -22,6 +22,6 @@ export class BaseException implements IBaseException {
 }
 export class UnCatchedException extends BaseException {
   constructor() {
-    super(HttpStatus.INTERNAL_SERVER_ERROR, GlobalExceptionCode.UnCached);
+    super(HttpStatus.INTERNAL_SERVER_ERROR, GlobalExceptionCode.UnCatched);
   }
 }
