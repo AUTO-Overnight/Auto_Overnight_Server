@@ -3,8 +3,6 @@ import { LoginReqDto } from './dto/request/login-req.dto';
 import { LoginResDto } from './dto/response/login-res.dto';
 import { HttpService } from '@nestjs/axios';
 import { schoolUrl } from '../../config';
-import { wrapper as axiosCookieJarSurpport } from 'axios-cookiejar-support';
-import { CookieJar } from 'tough-cookie';
 import { SchoolLoginReqDto } from '../../model/school-request/school-login-req.dto';
 import { UserService } from '../user/user.service';
 
@@ -13,16 +11,7 @@ export class AuthService {
   constructor(
     private readonly httpService: HttpService,
     private readonly userService: UserService,
-  ) {
-    axiosCookieJarSurpport(this.httpService.axiosRef);
-    this.httpService.axiosRef.defaults.jar = new CookieJar();
-    this.httpService.axiosRef.defaults.headers.get['User-Agent'] =
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36';
-    this.httpService.axiosRef.defaults.headers.post['User-Agent'] =
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36';
-    this.httpService.axiosRef.defaults.withCredentials = true;
-    this.httpService.axiosRef.defaults.maxRedirects = 10;
-  }
+  ) {}
 
   async login(dto: LoginReqDto): Promise<LoginResDto> {
     await this.loginForSchool(dto);

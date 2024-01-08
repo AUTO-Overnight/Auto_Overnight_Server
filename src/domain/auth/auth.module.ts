@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { HttpModule } from '@nestjs/axios';
 import { UserModule } from '../user/user.module';
+import { HttpClientModule } from '../../infra/http-client/http-client.module';
 
 @Module({
-  imports: [HttpModule.register({}), UserModule],
+  imports: [HttpClientModule.registerForSchool({}), UserModule],
   providers: [AuthService],
   exports: [AuthService],
 })
