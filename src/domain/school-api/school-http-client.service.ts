@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { SchoolFindUsernameResDto } from './dto/response/school-find-username-res.dto';
 import { schoolUrl } from '../../config';
-import { findUserNmXML, findYYtmgbnXML } from '../../model/school-request/xmls';
+import { findUserNmXML, findYYtmgbnXML } from './dto/request/xmls';
+import { SchoolFindSemesterResDto } from './dto/response/school-find-semester-res.dto';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
-import { SchoolFindUsernameResDto } from '../../model/school-response/school-find-username-res.dto';
-import { SchoolFindSemesterResDto } from '../../model/school-response/school-find-semester-res.dto';
+
 @Injectable()
-export class UserService {
-  async findUserName(axiosRef: AxiosInstance):Promise<SchoolFindUsernameResDto> {
+export class SchoolHttpClientService {
+  async findUserName(
+    axiosRef: AxiosInstance,
+  ): Promise<SchoolFindUsernameResDto> {
     const response = await axiosRef.post(schoolUrl.NAME_ID, findUserNmXML);
     const responseData = cheerio.load(response.data, {
       xmlMode: true,
@@ -18,9 +21,14 @@ export class UserService {
 
     return SchoolFindUsernameResDto.of(username, userStudentId);
   }
-  async findYearAndSemester(axiosRef: AxiosInstance): Promise<SchoolFindSemesterResDto> {
-    const response = await axiosRef.post(schoolUrl.YEAR_SEMESTER, findYYtmgbnXML);
-    const responseData = cheerio.load(response.data, {xmlMode: true});
+  async findYearAndSemester(
+    axiosRef: AxiosInstance,
+  ): Promise<SchoolFindSemesterResDto> {
+    const response = await axiosRef.post(
+      schoolUrl.YEAR_SEMESTER,
+      findYYtmgbnXML,
+    );
+    const responseData = cheerio.load(response.data, { xmlMode: true });
 
     const year = responseData('Col[id="yy"]').text();
     const semester = responseData('Col[id="tmGbn"]').text();

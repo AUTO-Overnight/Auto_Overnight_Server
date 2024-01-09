@@ -1,10 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserModule } from '../user/user.module';
-import { HttpClientModule } from '../../infra/http-client/http-client.module';
+import { HttpModule } from '@nestjs/axios';
+import { SchoolApiModule } from '../school-api/school-api.module';
 
 @Module({
-  imports: [HttpClientModule.registerForSchool({}), UserModule],
+  imports: [
+    HttpModule.register({
+      maxRedirects: 10,
+      withCredentials: true,
+    }),
+    SchoolApiModule,
+  ],
   providers: [AuthService],
   exports: [AuthService],
 })

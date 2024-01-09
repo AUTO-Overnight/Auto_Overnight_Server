@@ -7,7 +7,10 @@ export class SchoolFindUsernameResDto {
     this.userStudentId = userStudentId;
   }
 
-  public static of(username: string, userStudentId: string): SchoolFindUsernameResDto {
+  public static of(
+    username: string,
+    userStudentId: string,
+  ): SchoolFindUsernameResDto {
     return new SchoolFindUsernameResDto(username, userStudentId);
   }
 }
