@@ -15,12 +15,12 @@ export class SchoolHttpClientService {
       schoolRequestUrl.NAME_ID,
       findUserNmXML,
     );
-    const responseData = cheerio.load(response.data, {
+
+    const $ = cheerio.load(response.data, {
       xmlMode: true,
     });
-
-    const username = responseData('Col[id="userNm"]').text();
-    const userStudentId = responseData('Col[id="persNo"]').text();
+    const username = $('Col[id="userNm"]').text();
+    const userStudentId = $('Col[id="persNo"]').text();
 
     return SchoolFindUsernameResDto.of(username, userStudentId);
   }
@@ -31,10 +31,10 @@ export class SchoolHttpClientService {
       schoolRequestUrl.YEAR_SEMESTER,
       findYYtmgbnXML,
     );
-    const responseData = cheerio.load(response.data, { xmlMode: true });
 
-    const year = responseData('Col[id="yy"]').text();
-    const semester = responseData('Col[id="tmGbn"]').text();
+    const $ = cheerio.load(response.data, { xmlMode: true });
+    const year = $('Col[id="yy"]').text();
+    const semester = $('Col[id="tmGbn"]').text();
 
     return SchoolFindSemesterResDto.of(year, semester);
   }
