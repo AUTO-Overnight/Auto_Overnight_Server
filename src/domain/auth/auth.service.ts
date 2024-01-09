@@ -10,9 +10,12 @@ import { SchoolLoginReqDto } from '../school-api/dto/request/school-login-req.dt
 import { CookieJar } from 'tough-cookie';
 import { wrapper as axiosCookieJarSurpport } from 'axios-cookiejar-support';
 import { SchoolHttpClientService } from '../school-api/school-http-client.service';
+import { AuthFailedException } from '../../global/error/exception/base.exception';
+import { AuthExceptionCode } from '../../global/error/exception-code';
 
 @Injectable()
 export class AuthService {
+  private readonly LOGIN_ERROR_MESSAGE: string = '인증에 실패했습니다';
   constructor(
     private readonly httpService: HttpService,
     private readonly schoolHttpClientService: SchoolHttpClientService,
@@ -30,6 +33,9 @@ export class AuthService {
       schoolRequestUrl.SESSION + base64encode,
     );
     const cookies = loginForSchoolResponse.request._headers.cookie;
+    if (cookies == null) {
+      throw new AuthFailedException(AuthExceptionCode.AUTH_FAILED);
+    }
 
     // 학생 이름과 학기 정보 얻기
     const schoolFindUsernameResDto =
@@ -53,13 +59,15 @@ export class AuthService {
 
   async loginForSchool(dto: LoginReqDto) {
     const loginRequestDto = SchoolLoginReqDto.of(dto.id, dto.password);
-    const header = {
+    const requestConfig = {
       headers: schoolLoginRequestHeader,
     };
-    await this.httpService.axiosRef.post(
-      schoolRequestUrl.LOGIN,
-      loginRequestDto,
-      header,
-    );
+
+    await this.httpService.axiosRef
+      .post(schoolRequestUrl.LOGIN, loginRequestDto, requestConfig)
+      .then((res) => {
+        if (res.data.toString().includes(this.LOGIN_ERROR_MESSAGE))
+          throw new AuthFailedException(AuthExceptionCode.AUTH_FAILED);
+      });
   }
 }
