@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { LoginReqDto } from './dto/request/login-req.dto';
 import { LoginResDto } from './dto/response/login-res.dto';
 import { HttpService } from '@nestjs/axios';
-import { schoolUrl } from '../../config';
+import {
+  schoolLoginRequestHeader,
+  schoolRequestUrl,
+} from '../../config/school-api';
 import { SchoolLoginReqDto } from '../school-api/dto/request/school-login-req.dto';
 import { CookieJar } from 'tough-cookie';
 import { wrapper as axiosCookieJarSurpport } from 'axios-cookiejar-support';
@@ -24,7 +27,7 @@ export class AuthService {
     // 통합 정보 시스템에서 세션 얻기
     const base64encode = Buffer.from(dto.id, 'utf8').toString('base64');
     const loginForSchoolResponse = await this.httpService.axiosRef.get(
-      schoolUrl.SESSION + base64encode,
+      schoolRequestUrl.SESSION + base64encode,
     );
     const cookies = loginForSchoolResponse.request._headers.cookie;
 
@@ -51,10 +54,10 @@ export class AuthService {
   async loginForSchool(dto: LoginReqDto) {
     const loginRequestDto = SchoolLoginReqDto.of(dto.id, dto.password);
     const header = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: schoolLoginRequestHeader,
     };
     await this.httpService.axiosRef.post(
-      schoolUrl.LOGIN,
+      schoolRequestUrl.LOGIN,
       loginRequestDto,
       header,
     );
