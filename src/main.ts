@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { CustomLogger } from './infra/logging/custom-logger';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { ValidationPipe } from '@nestjs/common';
 
 // env설정
 dotenv.config();
@@ -21,6 +22,9 @@ async function bootstrap() {
   });
   app.enableCors();
   app.useLogger(app.get(CustomLogger));
+
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
   app.useGlobalFilters(app.get('GLOBAL_EXCEPTION_FILTER'));
   await app.listen(process.env.NEST_PORT || 8000);
 }
