@@ -57,7 +57,7 @@ describe('AuthService', () => {
 
       // when
       try {
-        await authService.login(dto);
+        await authService.loginForSchool(dto);
       } catch (e) {
         // then
         expect(e).toBeInstanceOf(AuthFailedException);
@@ -73,7 +73,7 @@ describe('AuthService', () => {
 
       // when
       try {
-        await authService.login(dto);
+        await authService.loginForSchool(dto);
       } catch (e) {
         // then
         expect(e).toBeInstanceOf(AuthFailedException);
