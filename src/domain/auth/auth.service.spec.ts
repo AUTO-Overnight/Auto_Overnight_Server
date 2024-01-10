@@ -48,7 +48,7 @@ describe('AuthService', () => {
       expect(result.name).toEqual('김하린');
     }, 10000);
 
-    it('틀린 아이디를 입력하면 오류가 발생한다', async () => {
+    it('틀린 아이디를 입력하면 예외가 발생한다', async () => {
       // given
       const dto = {
         id: process.env.LOGIN_ID + '1',
@@ -64,7 +64,7 @@ describe('AuthService', () => {
       }
     }, 10000);
 
-    it('틀린 비밀번호를 입력하면 오류가 발생한다', async () => {
+    it('틀린 비밀번호를 입력하면 예외가 발생한다', async () => {
       // given
       const dto = {
         id: process.env.LOGIN_ID,
