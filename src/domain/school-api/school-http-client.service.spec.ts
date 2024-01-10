@@ -1,4 +1,4 @@
-import { SchoolHttpClientService } from '../school-api/school-http-client.service';
+import { SchoolHttpClientService } from './school-http-client.service';
 import { Test } from '@nestjs/testing';
 import { InternalServerException } from '../../global/error/exception/base.exception';
 import axios from 'axios';
