@@ -8,19 +8,22 @@ import {
 } from '../../config/school-api';
 import { SchoolLoginReqDto } from '../school-api/dto/request/school-login-req.dto';
 import { CookieJar } from 'tough-cookie';
-import { wrapper as axiosCookieJarSurpport } from 'axios-cookiejar-support';
+import { wrapper as axiosCookieJarSupport } from 'axios-cookiejar-support';
 import { SchoolHttpClientService } from '../school-api/school-http-client.service';
 import { AuthFailedException } from '../../global/error/exception/base.exception';
 import { AuthExceptionCode } from '../../global/error/exception-code';
 
 @Injectable()
 export class AuthService {
+  private readonly LOGIN_ERROR_MESSAGE_SEPERATOR: string = '"';
   private readonly LOGIN_ERROR_MESSAGE: string = '인증에 실패했습니다';
+  private readonly LOGIN_ERROR_MESSAGE_INDEX: number = 3;
+
   constructor(
     private readonly httpService: HttpService,
     private readonly schoolHttpClientService: SchoolHttpClientService,
   ) {
-    axiosCookieJarSurpport(this.httpService.axiosRef);
+    axiosCookieJarSupport(this.httpService.axiosRef);
   }
 
   async login(dto: LoginReqDto): Promise<LoginResDto> {
@@ -66,8 +69,14 @@ export class AuthService {
     await this.httpService.axiosRef
       .post(schoolRequestUrl.LOGIN, loginRequestDto, requestConfig)
       .then((res) => {
-        if (res.data.toString().includes(this.LOGIN_ERROR_MESSAGE))
-          throw new AuthFailedException(AuthExceptionCode.AUTH_FAILED);
+        const resData = res.data.toString();
+        const resDataArray = resData.split(this.LOGIN_ERROR_MESSAGE_SEPERATOR);
+        if (resData.includes(this.LOGIN_ERROR_MESSAGE)) {
+          throw new AuthFailedException(
+            AuthExceptionCode.AUTH_FAILED,
+            resDataArray[this.LOGIN_ERROR_MESSAGE_INDEX],
+          );
+        }
       });
   }
 }
