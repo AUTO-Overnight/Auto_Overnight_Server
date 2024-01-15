@@ -3,7 +3,7 @@ import { LoginReqDto } from './dto/request/login-req.dto';
 import { LoginResDto } from './dto/response/login-res.dto';
 import { HttpService } from '@nestjs/axios';
 import {
-  schoolLoginRequestHeader,
+  x_www_form_urlencoded_RequestHeader,
   schoolRequestUrl,
 } from '../../config/school-api';
 import { SchoolLoginReqDto } from '../school-api/dto/request/school-login-req.dto';
@@ -63,7 +63,7 @@ export class AuthService {
   async loginForSchool(dto: LoginReqDto) {
     const loginRequestDto = SchoolLoginReqDto.of(dto.id, dto.password);
     const requestConfig = {
-      headers: schoolLoginRequestHeader,
+      headers: x_www_form_urlencoded_RequestHeader,
     };
 
     await this.httpService.axiosRef

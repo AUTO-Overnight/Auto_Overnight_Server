@@ -22,6 +22,10 @@ export const schoolRequestUrl = {
     'aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021',
 };
 
-export const schoolLoginRequestHeader = {
+export const x_www_form_urlencoded_RequestHeader = {
   'Content-Type': 'application/x-www-form-urlencoded',
+};
+
+export const xml_RequestHeader = {
+  'Content-Type': 'text/xml',
 };
