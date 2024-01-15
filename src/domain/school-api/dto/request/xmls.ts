@@ -40,10 +40,10 @@ export const FindDormitoryStudentInfoXML = `<?model version="1.0" encoding="UTF-
             </ColumnInfo>
             <Rows>
                 <Row type="update">
-                    <Col id="yy">%s</Col>
-                    <Col id="tmGbn">%s</Col>
-                    <Col id="schregNo">%s</Col>
-                    <Col id="stdKorNm">%s</Col>
+                    <Col id="yy">{yy}</Col>
+                    <Col id="tmGbn">{tmGbn}</Col>
+                    <Col id="schregNo">{schregNo}</Col>
+                    <Col id="stdKorNm">{stdKorNm}</Col>
                     <OrgRow>
                     </OrgRow>
                 </Row>

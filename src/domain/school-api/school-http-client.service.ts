@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { SchoolFindUsernameResDto } from './dto/response/school-find-username-res.dto';
-import { schoolRequestUrl } from '../../config/school-api';
-import { findUserNameXML, findYearAndSemesterXML } from './dto/request/xmls';
+import { schoolRequestUrl, xml_RequestHeader } from '../../config/school-api';
+import {
+  FindDormitoryStudentInfoXML,
+  findUserNameXML,
+  findYearAndSemesterXML,
+} from './dto/request/xmls';
 import { SchoolFindSemesterResDto } from './dto/response/school-find-semester-res.dto';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 import { InternalServerException } from '../../global/error/exception/base.exception';
 import { UserExceptionCode } from '../../global/error/exception-code';
+import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
 
 @Injectable()
 export class SchoolHttpClientService {
@@ -53,5 +58,22 @@ export class SchoolHttpClientService {
       );
     }
     return SchoolFindSemesterResDto.of(year, semester);
+  }
+
+  async findDormitoryStudentInfo(
+    axiosRef: AxiosInstance,
+    dto: SchoolFindDormitoryStudentInfoReqDto,
+  ) {
+    const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
+
+    const requestConfig = {
+      headers: xml_RequestHeader,
+    };
+
+    const response = await axiosRef.post(
+      schoolRequestUrl.REWARD_LIST,
+      xml,
+      requestConfig,
+    );
   }
 }
