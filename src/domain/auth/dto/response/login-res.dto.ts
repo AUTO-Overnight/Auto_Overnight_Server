@@ -7,7 +7,12 @@ export class LoginResDto {
   semester: string;
   year: string;
 
-  private constructor(cookies: string, name: string, semester: string, year: string) {
+  private constructor(
+    cookies: string,
+    name: string,
+    semester: string,
+    year: string,
+  ) {
     this.cookies = cookies;
     this.name = name;
     this.outStayFrDt = null;
@@ -16,7 +21,12 @@ export class LoginResDto {
     this.semester = semester;
     this.year = year;
   }
-  public static of(cookies: string, name: string, semester: string, year: string): LoginResDto {
+  public static of(
+    cookies: string,
+    name: string,
+    semester: string,
+    year: string,
+  ): LoginResDto {
     return new LoginResDto(cookies, name, semester, year);
   }
 }

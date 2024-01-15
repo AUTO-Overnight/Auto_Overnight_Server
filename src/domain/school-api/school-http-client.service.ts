@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SchoolFindUsernameResDto } from './dto/response/school-find-username-res.dto';
 import { schoolRequestUrl } from '../../config/school-api';
-import { findUserNmXML, findYYtmgbnXML } from './dto/request/xmls';
+import { findUserNameXML, findYearAndSemesterXML } from './dto/request/xmls';
 import { SchoolFindSemesterResDto } from './dto/response/school-find-semester-res.dto';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
@@ -15,7 +15,7 @@ export class SchoolHttpClientService {
   ): Promise<SchoolFindUsernameResDto> {
     const response = await axiosRef.post(
       schoolRequestUrl.NAME_ID,
-      findUserNmXML,
+      findUserNameXML,
     );
 
     const $ = cheerio.load(response.data, {
@@ -39,7 +39,7 @@ export class SchoolHttpClientService {
   ): Promise<SchoolFindSemesterResDto> {
     const response = await axiosRef.post(
       schoolRequestUrl.YEAR_SEMESTER,
-      findYYtmgbnXML,
+      findYearAndSemesterXML,
     );
 
     const $ = cheerio.load(response.data, { xmlMode: true });
