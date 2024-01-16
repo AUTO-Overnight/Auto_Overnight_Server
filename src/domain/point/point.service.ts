@@ -5,12 +5,14 @@ import { SchoolHttpClientService } from '../school-api/school-http-client.servic
 import { HttpService } from '@nestjs/axios';
 import { wrapper as axiosCookieJarSupport } from 'axios-cookiejar-support';
 import { Cookie, CookieJar } from 'tough-cookie';
-import { SCHOOL_URL } from '../../config/school-api';
+import {
+  SCHOOL_API_COOKIE_SESSION__KEY,
+  SCHOOL_URL,
+} from '../../config/school-api';
 import { SchoolFindDormitoryStudentInfoResDto } from '../school-api/dto/response/school-find-dormitory-student-info-res.dto';
 
 @Injectable()
 export class PointService {
-  private readonly COOKIE_SESSION__KEY: string = 'JSVSESSIONID';
   constructor(
     private readonly schoolHttpClientService: SchoolHttpClientService,
     private readonly httpService: HttpService,
@@ -23,7 +25,7 @@ export class PointService {
   ): Promise<SchoolFindDormitoryStudentInfoResDto> {
     // cookie 설정
     const cookie = new Cookie({
-      key: this.COOKIE_SESSION__KEY,
+      key: SCHOOL_API_COOKIE_SESSION__KEY,
       value: dto.cookies,
     });
     this.httpService.axiosRef.defaults.jar = new CookieJar();
