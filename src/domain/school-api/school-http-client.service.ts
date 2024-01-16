@@ -12,6 +12,7 @@ import * as cheerio from 'cheerio';
 import { InternalServerException } from '../../global/error/exception/base.exception';
 import { UserExceptionCode } from '../../global/error/exception-code';
 import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
+import { SchoolFindDormitoryStudentInfoResDto } from './dto/response/school-find-dormitory-student-info-res.dto';
 
 @Injectable()
 export class SchoolHttpClientService {
@@ -63,7 +64,7 @@ export class SchoolHttpClientService {
   async findDormitoryStudentInfo(
     axiosRef: AxiosInstance,
     dto: SchoolFindDormitoryStudentInfoReqDto,
-  ) {
+  ): Promise<SchoolFindDormitoryStudentInfoResDto> {
     const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
 
     const requestConfig = {
@@ -75,5 +76,18 @@ export class SchoolHttpClientService {
       xml,
       requestConfig,
     );
+
+    const responseDto = SchoolFindDormitoryStudentInfoResDto.of();
+
+    const $ = cheerio.load(response.data, { xml: true });
+    $('Row').each(function () {
+      const cmpScr = $(this).children('Col[id="cmpScr"]').text();
+      const lifSstArdGbn = $(this).children('Col[id="lifSstArdGbn"]').text();
+      const ardInptDt = $(this).children('Col[id="ardInptDt"]').text();
+      const lifSstArdCtnt = $(this).children('Col[id="lifSstArdCtnt"]').text();
+      responseDto.addNewOne(cmpScr, lifSstArdGbn, ardInptDt, lifSstArdCtnt);
+    });
+
+    return responseDto;
   }
 }
