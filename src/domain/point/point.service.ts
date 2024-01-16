@@ -10,6 +10,7 @@ import { SchoolFindDormitoryStudentInfoResDto } from '../school-api/dto/response
 
 @Injectable()
 export class PointService {
+  private readonly COOKIE_SESSION__KEY: string = 'JSVSESSIONID';
   constructor(
     private readonly schoolHttpClientService: SchoolHttpClientService,
     private readonly httpService: HttpService,
@@ -21,7 +22,10 @@ export class PointService {
     dto: FindPointListReqDto,
   ): Promise<SchoolFindDormitoryStudentInfoResDto> {
     // cookie 설정
-    const cookie = new Cookie({ key: 'JSVSESSIONID', value: dto.cookies });
+    const cookie = new Cookie({
+      key: this.COOKIE_SESSION__KEY,
+      value: dto.cookies,
+    });
     this.httpService.axiosRef.defaults.jar = new CookieJar();
     this.httpService.axiosRef.defaults.jar.setCookie(cookie, SCHOOL_URL);
 
@@ -30,6 +34,7 @@ export class PointService {
       this.httpService.axiosRef,
     );
 
+    // 상벌점 내역 조회 시 필요한 dto 생성
     const schoolFindDormitoryStudentInfoReqDto =
       SchoolFindDormitoryStudentInfoReqDto.of(
         dto.year,
@@ -38,6 +43,7 @@ export class PointService {
         dto.name,
       );
 
+    // 상벌점 내역 조회
     return this.schoolHttpClientService.findDormitoryStudentInfo(
       this.httpService.axiosRef,
       schoolFindDormitoryStudentInfoReqDto,

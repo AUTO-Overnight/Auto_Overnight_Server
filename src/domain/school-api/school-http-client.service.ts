@@ -10,9 +10,13 @@ import { SchoolFindSemesterResDto } from './dto/response/school-find-semester-re
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 import { InternalServerException } from '../../global/error/exception/base.exception';
-import { UserExceptionCode } from '../../global/error/exception-code';
+import {
+  PointExceptionCode,
+  UserExceptionCode,
+} from '../../global/error/exception-code';
 import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
 import { SchoolFindDormitoryStudentInfoResDto } from './dto/response/school-find-dormitory-student-info-res.dto';
+import { formatDate } from '../../util/string-utils';
 
 @Injectable()
 export class SchoolHttpClientService {
@@ -80,14 +84,27 @@ export class SchoolHttpClientService {
     const responseDto = SchoolFindDormitoryStudentInfoResDto.of();
 
     const $ = cheerio.load(response.data, { xml: true });
+
+    const errorCode = $('Parameter[id="ErrorCode"]').text();
+
+    if (errorCode !== '0') {
+      throw new InternalServerException(
+        PointExceptionCode.FIND_POINT_LIST_FAILED,
+      );
+    }
+
     $('Row').each(function () {
       const cmpScr = $(this).children('Col[id="cmpScr"]').text();
       const lifSstArdGbn = $(this).children('Col[id="lifSstArdGbn"]').text();
       const ardInptDt = $(this).children('Col[id="ardInptDt"]').text();
       const lifSstArdCtnt = $(this).children('Col[id="lifSstArdCtnt"]').text();
-      responseDto.addNewOne(cmpScr, lifSstArdGbn, ardInptDt, lifSstArdCtnt);
+      responseDto.addNewOne(
+        cmpScr,
+        lifSstArdGbn,
+        formatDate(ardInptDt),
+        lifSstArdCtnt,
+      );
     });
-
     return responseDto;
   }
 }

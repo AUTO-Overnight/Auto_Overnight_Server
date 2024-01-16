@@ -10,3 +10,7 @@ export class AuthExceptionCode {
 export class UserExceptionCode {
   static FIND_USER_INFO_FAILED = 'U0000';
 }
+
+export class PointExceptionCode {
+  static FIND_POINT_LIST_FAILED = 'P0000';
+}
