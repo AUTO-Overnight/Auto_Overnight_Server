@@ -1,11 +1,16 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Get } from '@nestjs/common';
+import { PointService } from '../domain/point/point.service';
+import { FindPointListReqDto } from '../domain/point/dto/request/find-point-list-req.dto';
+import { SchoolFindDormitoryStudentInfoResDto } from '../domain/school-api/dto/response/school-find-dormitory-student-info-res.dto';
 
-@Controller('points')
+@Controller('/api/v1/points')
 export class PointController {
-  // constructor(private readonly appService: AppService) {}
-  //
-  // @Get()
-  // getHello(): string {
-  //   return this.appService.getHello();
-  // }
+  constructor(private readonly pointService: PointService) {}
+
+  @Get()
+  async findPointList(
+    @Body() dto: FindPointListReqDto,
+  ): Promise<SchoolFindDormitoryStudentInfoResDto> {
+    return this.pointService.findPointList(dto);
+  }
 }
