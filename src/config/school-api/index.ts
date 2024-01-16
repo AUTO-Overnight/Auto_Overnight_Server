@@ -1,6 +1,6 @@
 export const SCHOOL_URL = 'https://dream.tukorea.ac.kr/';
 
-export const schoolUrl = {
+export const schoolRequestUrl = {
   LOGIN: 'https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null',
   SESSION: SCHOOL_URL + 'com/SsoCtr/initPageWork.do?loginGbn=sso&loginPersNo=',
   YEAR_SEMESTER:
@@ -20,4 +20,8 @@ export const schoolUrl = {
   SEND_APPLY:
     SCHOOL_URL +
     'aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021',
+};
+
+export const schoolLoginRequestHeader = {
+  'Content-Type': 'application/x-www-form-urlencoded',
 };
