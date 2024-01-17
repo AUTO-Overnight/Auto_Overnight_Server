@@ -45,7 +45,7 @@ describe('AuthService', () => {
       // then
       expect(result).toBeDefined();
       expect(result.cookies).toBeDefined();
-      expect(result.name).toEqual('김하린');
+      expect(result.name).toEqual(process.env.LOGIN_NAME);
     }, 10000);
 
     it('틀린 아이디를 입력하면 예외가 발생한다', async () => {
