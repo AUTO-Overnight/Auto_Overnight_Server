@@ -23,7 +23,7 @@ import {
   UserExceptionCode,
 } from '../../global/error/exception-code';
 import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
-import { SchoolFindDormitoryStudentInfoResDto } from './dto/response/school-find-dormitory-student-info-res.dto';
+import { SchoolFindDormitoryRewardsResDto } from './dto/response/school-find-dormitory-rewards-res.dto';
 import { formatDate } from '../../util/string-utils';
 import { SchoolLoginReqDto } from './dto/request/school-login-req.dto';
 
@@ -110,10 +110,10 @@ export class SchoolHttpClientService {
     return SchoolFindSemesterResDto.of(year, semester);
   }
 
-  async findDormitoryStudentInfo(
+  async findDormitoryRewards(
     axiosRef: AxiosInstance,
     dto: SchoolFindDormitoryStudentInfoReqDto,
-  ): Promise<SchoolFindDormitoryStudentInfoResDto> {
+  ): Promise<SchoolFindDormitoryRewardsResDto> {
     const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
 
     const requestConfig = {
@@ -126,7 +126,7 @@ export class SchoolHttpClientService {
       requestConfig,
     );
 
-    const responseDto = SchoolFindDormitoryStudentInfoResDto.of();
+    const responseDto = SchoolFindDormitoryRewardsResDto.of();
     const $ = cheerio.load(response.data, { xml: true });
 
     const errorCode = $('Parameter[id="ErrorCode"]').text();

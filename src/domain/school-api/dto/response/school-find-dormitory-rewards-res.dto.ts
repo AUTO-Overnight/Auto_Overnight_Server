@@ -1,4 +1,4 @@
-export class SchoolFindDormitoryStudentInfoResDto {
+export class SchoolFindDormitoryRewardsResDto {
   score: string[];
   scoreType: string[];
   date: string[];
@@ -11,8 +11,8 @@ export class SchoolFindDormitoryStudentInfoResDto {
     this.content = [];
   }
 
-  public static of(): SchoolFindDormitoryStudentInfoResDto {
-    return new SchoolFindDormitoryStudentInfoResDto();
+  public static of(): SchoolFindDormitoryRewardsResDto {
+    return new SchoolFindDormitoryRewardsResDto();
   }
 
   public addNewOne(

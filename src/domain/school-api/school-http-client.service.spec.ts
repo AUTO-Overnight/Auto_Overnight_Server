@@ -132,7 +132,7 @@ describe('SchoolHttpClientService', () => {
 
       // when
       try {
-        await schoolHttpClientService.findDormitoryStudentInfo(
+        await schoolHttpClientService.findDormitoryRewards(
           axiosInstance,
           schoolFindDormitoryStudentInfoReqDto,
         );
@@ -166,7 +166,7 @@ describe('SchoolHttpClientService', () => {
 
       // when
       try {
-        await schoolHttpClientService.findDormitoryStudentInfo(
+        await schoolHttpClientService.findDormitoryRewards(
           axiosInstance,
           schoolFindDormitoryStudentInfoReqDto,
         );

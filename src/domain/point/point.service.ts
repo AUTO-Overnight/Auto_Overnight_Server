@@ -9,7 +9,7 @@ import {
   SCHOOL_API_COOKIE_SESSION__KEY,
   SCHOOL_URL,
 } from '../../config/school-api';
-import { SchoolFindDormitoryStudentInfoResDto } from '../school-api/dto/response/school-find-dormitory-student-info-res.dto';
+import { SchoolFindDormitoryRewardsResDto } from '../school-api/dto/response/school-find-dormitory-rewards-res.dto';
 import { AuthFailedException } from '../../global/error/exception/base.exception';
 import { AuthExceptionCode } from '../../global/error/exception-code';
 
@@ -24,7 +24,7 @@ export class PointService {
 
   async findPointList(
     dto: FindPointListReqDto,
-  ): Promise<SchoolFindDormitoryStudentInfoResDto> {
+  ): Promise<SchoolFindDormitoryRewardsResDto> {
     // cookie 설정
     const cookie = new Cookie({
       key: SCHOOL_API_COOKIE_SESSION__KEY,
@@ -55,7 +55,7 @@ export class PointService {
       );
 
     // 상벌점 내역 조회
-    return this.schoolHttpClientService.findDormitoryStudentInfo(
+    return this.schoolHttpClientService.findDormitoryRewards(
       this.httpService.axiosRef,
       schoolFindDormitoryStudentInfoReqDto,
     );
