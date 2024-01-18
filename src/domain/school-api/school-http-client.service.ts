@@ -11,6 +11,7 @@ import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 import { InternalServerException } from '../../global/error/exception/base.exception';
 import {
+  AuthExceptionCode,
   PointExceptionCode,
   UserExceptionCode,
 } from '../../global/error/exception-code';
@@ -20,6 +21,19 @@ import { formatDate } from '../../util/string-utils';
 
 @Injectable()
 export class SchoolHttpClientService {
+  async getSession(axiosRef: AxiosInstance, id: string): Promise<string> {
+    const base64encode = Buffer.from(id, 'utf8').toString('base64');
+    const response = await axiosRef.get(
+      schoolRequestUrl.SESSION + base64encode,
+    );
+    const cookies = response.request._headers.cookie;
+
+    if (cookies == null) {
+      throw new InternalServerException(AuthExceptionCode.AUTH_FAILED);
+    }
+    return cookies;
+  }
+
   async findUserName(
     axiosRef: AxiosInstance,
   ): Promise<SchoolFindUsernameResDto> {

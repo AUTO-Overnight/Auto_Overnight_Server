@@ -31,14 +31,10 @@ export class AuthService {
     await this.loginForSchool(dto);
 
     // 통합 정보 시스템에서 세션 얻기
-    const base64encode = Buffer.from(dto.id, 'utf8').toString('base64');
-    const loginForSchoolResponse = await this.httpService.axiosRef.get(
-      schoolRequestUrl.SESSION + base64encode,
+    const cookies = await this.schoolHttpClientService.getSession(
+      this.httpService.axiosRef,
+      dto.id,
     );
-    const cookies = loginForSchoolResponse.request._headers.cookie;
-    if (cookies == null) {
-      throw new AuthFailedException(AuthExceptionCode.AUTH_FAILED);
-    }
 
     // 학생 이름과 학기 정보 얻기
     const schoolFindUsernameResDto =
