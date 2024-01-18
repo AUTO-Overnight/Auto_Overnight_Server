@@ -9,7 +9,7 @@ import {
   PointExceptionCode,
   UserExceptionCode,
 } from '../../global/error/exception-code';
-import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
+import { SchoolFindDormitoryRewardsReqDto } from './dto/request/school-find-dormitory-rewards-req.dto';
 import {
   SCHOOL_API_COOKIE_SESSION__KEY,
   SCHOOL_URL,
@@ -123,7 +123,7 @@ describe('SchoolHttpClientService', () => {
       });
 
       const schoolFindDormitoryStudentInfoReqDto =
-        SchoolFindDormitoryStudentInfoReqDto.of(
+        SchoolFindDormitoryRewardsReqDto.of(
           '2023',
           '1',
           process.env.LOGIN_ID,
@@ -157,7 +157,7 @@ describe('SchoolHttpClientService', () => {
       axiosInstance.defaults.jar.setCookie(cookie, SCHOOL_URL);
 
       const schoolFindDormitoryStudentInfoReqDto =
-        SchoolFindDormitoryStudentInfoReqDto.of(
+        SchoolFindDormitoryRewardsReqDto.of(
           '2023',
           '1',
           process.env.LOGIN_ID,

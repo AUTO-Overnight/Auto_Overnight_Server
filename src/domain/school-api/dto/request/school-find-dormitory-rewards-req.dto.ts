@@ -1,4 +1,4 @@
-export class SchoolFindDormitoryStudentInfoReqDto {
+export class SchoolFindDormitoryRewardsReqDto {
   yy: string;
   tmGbn: string;
   schregNo: string;
@@ -21,13 +21,8 @@ export class SchoolFindDormitoryStudentInfoReqDto {
     tmGbn: string,
     schregNo: string,
     stdKorNm: string,
-  ): SchoolFindDormitoryStudentInfoReqDto {
-    return new SchoolFindDormitoryStudentInfoReqDto(
-      yy,
-      tmGbn,
-      schregNo,
-      stdKorNm,
-    );
+  ): SchoolFindDormitoryRewardsReqDto {
+    return new SchoolFindDormitoryRewardsReqDto(yy, tmGbn, schregNo, stdKorNm);
   }
 
   public toXmlForSchoolRequest(xml: string): string {

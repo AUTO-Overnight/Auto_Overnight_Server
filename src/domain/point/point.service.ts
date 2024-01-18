@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FindPointListReqDto } from './dto/request/find-point-list-req.dto';
-import { SchoolFindDormitoryStudentInfoReqDto } from '../school-api/dto/request/school-find-dormitory-student-info-req.dto';
+import { SchoolFindDormitoryRewardsReqDto } from '../school-api/dto/request/school-find-dormitory-rewards-req.dto';
 import { SchoolHttpClientService } from '../school-api/school-http-client.service';
 import { HttpService } from '@nestjs/axios';
 import { wrapper as axiosCookieJarSupport } from 'axios-cookiejar-support';
@@ -47,7 +47,7 @@ export class PointService {
 
     // 상벌점 내역 조회 시 필요한 dto 생성
     const schoolFindDormitoryStudentInfoReqDto =
-      SchoolFindDormitoryStudentInfoReqDto.of(
+      SchoolFindDormitoryRewardsReqDto.of(
         dto.year,
         dto.semester,
         findUsernameResDto.userStudentId,

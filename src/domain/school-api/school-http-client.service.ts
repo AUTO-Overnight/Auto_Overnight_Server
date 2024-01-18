@@ -22,7 +22,7 @@ import {
   PointExceptionCode,
   UserExceptionCode,
 } from '../../global/error/exception-code';
-import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
+import { SchoolFindDormitoryRewardsReqDto } from './dto/request/school-find-dormitory-rewards-req.dto';
 import { SchoolFindDormitoryRewardsResDto } from './dto/response/school-find-dormitory-rewards-res.dto';
 import { formatDate } from '../../util/string-utils';
 import { SchoolLoginReqDto } from './dto/request/school-login-req.dto';
@@ -112,7 +112,7 @@ export class SchoolHttpClientService {
 
   async findDormitoryRewards(
     axiosRef: AxiosInstance,
-    dto: SchoolFindDormitoryStudentInfoReqDto,
+    dto: SchoolFindDormitoryRewardsReqDto,
   ): Promise<SchoolFindDormitoryRewardsResDto> {
     const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
 
