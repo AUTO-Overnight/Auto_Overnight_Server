@@ -38,13 +38,6 @@ export class PointService {
       this.httpService.axiosRef,
     );
 
-    // request의 사용자 이름과 쿠키의 사용자 이름이 일치하지 않는 경우 예외 발생
-    if (findUsernameResDto.username != dto.name) {
-      throw new AuthFailedException(
-        AuthExceptionCode.PROVIDED_USERNAME_AND_COOKIE_DO_NOT_MATCH,
-      );
-    }
-
     // 상벌점 내역 조회 시 필요한 dto 생성
     const schoolFindDormitoryStudentInfoReqDto =
       SchoolFindDormitoryStudentInfoReqDto.of(
