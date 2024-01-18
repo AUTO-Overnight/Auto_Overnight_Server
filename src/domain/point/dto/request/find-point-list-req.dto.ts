@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { semesterCode } from '../../../../config/school-api';
 
 export class FindPointListReqDto {
   @IsString()
@@ -6,6 +7,7 @@ export class FindPointListReqDto {
   year: string;
 
   @IsString()
+  @IsIn([...semesterCode])
   @IsNotEmpty()
   semester: string;
 

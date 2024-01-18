@@ -45,12 +45,11 @@ describe('PointService', () => {
     it('요청한 사용자 이름과 쿠키 정보가 일치하지 않다면 예외가 발생한다', async () => {
       // given
       httpService.axiosRef.defaults.jar = new CookieJar();
-      let cookie = '';
       await schoolHttpClientService.login(
         httpService.axiosRef,
         SchoolLoginReqDto.of(process.env.LOGIN_ID, process.env.LOGIN_PASSWORD),
       );
-      cookie = await schoolHttpClientService.getSession(
+      const cookie = await schoolHttpClientService.getSession(
         httpService.axiosRef,
         process.env.LOGIN_ID,
       );
@@ -68,6 +67,32 @@ describe('PointService', () => {
         // then
         expect(e).toBeInstanceOf(AuthFailedException);
       }
+    }, 10000);
+
+    it('유효하지 않은 년도의 상벌점 내역 조회 요청 시, 빈 배열을 반환한다.', async () => {
+      // given
+      httpService.axiosRef.defaults.jar = new CookieJar();
+      await schoolHttpClientService.login(
+        httpService.axiosRef,
+        SchoolLoginReqDto.of(process.env.LOGIN_ID, process.env.LOGIN_PASSWORD),
+      );
+      const cookie = await schoolHttpClientService.getSession(
+        httpService.axiosRef,
+        process.env.LOGIN_ID,
+      );
+
+      const dto = new FindPointListReqDto();
+      dto.cookies = cookie;
+      dto.name = process.env.LOGIN_NAME;
+      dto.semester = '2';
+      dto.year = '2019';
+
+      // when
+      const res = await pointService.findPointList(dto);
+      expect(res.date).toEqual([]);
+      expect(res.content).toEqual([]);
+      expect(res.score).toEqual([]);
+      expect(res.scoreType).toEqual([]);
     }, 10000);
   });
 });

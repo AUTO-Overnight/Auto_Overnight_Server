@@ -30,3 +30,6 @@ export const x_www_form_urlencoded_RequestHeader = {
 export const xml_RequestHeader = {
   'Content-Type': 'text/xml',
 };
+
+// 1: 1학기, 2: 2학기, 5: 여름학기, 6: 겨울학기
+export const semesterCode = ['1', '2', '5', '6'];
