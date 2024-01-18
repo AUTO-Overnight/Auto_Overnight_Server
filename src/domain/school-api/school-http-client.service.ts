@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SchoolFindUsernameResDto } from './dto/response/school-find-username-res.dto';
-import { schoolRequestUrl, xml_RequestHeader } from '../../config/school-api';
+import {
+  schoolRequestUrl,
+  x_www_form_urlencoded_RequestHeader,
+  xml_RequestHeader,
+} from '../../config/school-api';
 import {
   FindDormitoryStudentInfoXML,
   findUserNameXML,
@@ -9,7 +13,10 @@ import {
 import { SchoolFindSemesterResDto } from './dto/response/school-find-semester-res.dto';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
-import { InternalServerException } from '../../global/error/exception/base.exception';
+import {
+  AuthFailedException,
+  InternalServerException,
+} from '../../global/error/exception/base.exception';
 import {
   AuthExceptionCode,
   PointExceptionCode,
@@ -18,9 +25,14 @@ import {
 import { SchoolFindDormitoryStudentInfoReqDto } from './dto/request/school-find-dormitory-student-info-req.dto';
 import { SchoolFindDormitoryStudentInfoResDto } from './dto/response/school-find-dormitory-student-info-res.dto';
 import { formatDate } from '../../util/string-utils';
+import { SchoolLoginReqDto } from './dto/request/school-login-req.dto';
 
 @Injectable()
 export class SchoolHttpClientService {
+  private readonly LOGIN_ERROR_MESSAGE_SEPERATOR: string = '"';
+  private readonly LOGIN_ERROR_MESSAGE: string = '인증에 실패했습니다';
+  private readonly LOGIN_ERROR_MESSAGE_INDEX: number = 3;
+
   async getSession(axiosRef: AxiosInstance, id: string): Promise<string> {
     const base64encode = Buffer.from(id, 'utf8').toString('base64');
     const response = await axiosRef.get(
@@ -32,6 +44,25 @@ export class SchoolHttpClientService {
       throw new InternalServerException(AuthExceptionCode.AUTH_FAILED);
     }
     return cookies;
+  }
+
+  async login(axiosRef: AxiosInstance, dto: SchoolLoginReqDto) {
+    const requestConfig = {
+      headers: x_www_form_urlencoded_RequestHeader,
+    };
+
+    await axiosRef
+      .post(schoolRequestUrl.LOGIN, dto, requestConfig)
+      .then((res) => {
+        const resData = res.data.toString();
+        const resDataArray = resData.split(this.LOGIN_ERROR_MESSAGE_SEPERATOR);
+        if (resData.includes(this.LOGIN_ERROR_MESSAGE)) {
+          throw new AuthFailedException(
+            AuthExceptionCode.AUTH_FAILED,
+            resDataArray[this.LOGIN_ERROR_MESSAGE_INDEX],
+          );
+        }
+      });
   }
 
   async findUserName(
@@ -96,11 +127,9 @@ export class SchoolHttpClientService {
     );
 
     const responseDto = SchoolFindDormitoryStudentInfoResDto.of();
-
     const $ = cheerio.load(response.data, { xml: true });
 
     const errorCode = $('Parameter[id="ErrorCode"]').text();
-
     if (errorCode !== '0') {
       throw new InternalServerException(
         PointExceptionCode.FIND_POINT_LIST_FAILED,

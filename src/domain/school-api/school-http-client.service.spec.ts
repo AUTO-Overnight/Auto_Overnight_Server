@@ -1,6 +1,9 @@
 import { SchoolHttpClientService } from './school-http-client.service';
 import { Test } from '@nestjs/testing';
-import { InternalServerException } from '../../global/error/exception/base.exception';
+import {
+  AuthFailedException,
+  InternalServerException,
+} from '../../global/error/exception/base.exception';
 import axios from 'axios';
 import {
   PointExceptionCode,
@@ -12,6 +15,7 @@ import {
   SCHOOL_URL,
 } from '../../config/school-api';
 import { Cookie, CookieJar } from 'tough-cookie';
+import { SchoolLoginReqDto } from './dto/request/school-login-req.dto';
 
 describe('SchoolHttpClientService', () => {
   let schoolHttpClientService: SchoolHttpClientService;
@@ -24,6 +28,52 @@ describe('SchoolHttpClientService', () => {
     schoolHttpClientService = moduleRef.get<SchoolHttpClientService>(
       SchoolHttpClientService,
     );
+  });
+
+  describe('로그인', () => {
+    it('틀린 아이디를 입력하면 예외가 발생한다', async () => {
+      // given
+      const axiosInstance = axios.create({
+        maxRedirects: 10,
+        withCredentials: true,
+      });
+      axiosInstance.defaults.jar = new CookieJar();
+
+      const dto = SchoolLoginReqDto.of(
+        process.env.LOGIN_ID + '1',
+        process.env.LOGIN_PASSWORD,
+      );
+
+      // when
+      try {
+        await schoolHttpClientService.login(axiosInstance, dto);
+      } catch (e) {
+        // then
+        expect(e).toBeInstanceOf(AuthFailedException);
+      }
+    }, 10000);
+
+    it('틀린 비밀번호를 입력하면 예외가 발생한다', async () => {
+      // given
+      const axiosInstance = axios.create({
+        maxRedirects: 10,
+        withCredentials: true,
+      });
+      axiosInstance.defaults.jar = new CookieJar();
+
+      const dto = SchoolLoginReqDto.of(
+        process.env.LOGIN_ID,
+        process.env.LOGIN_PASSWORD + '1',
+      );
+
+      // when
+      try {
+        await schoolHttpClientService.login(axiosInstance, dto);
+      } catch (e) {
+        // then
+        expect(e).toBeInstanceOf(AuthFailedException);
+      }
+    }, 10000);
   });
 
   describe('유저 정보 조회', () => {
