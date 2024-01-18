@@ -5,6 +5,7 @@ export class GlobalExceptionCode {
 
 export class AuthExceptionCode {
   static AUTH_FAILED = 'A0000';
+  static PROVIDED_USERNAME_AND_COOKIE_DO_NOT_MATCH = 'A0001';
 }
 
 export class UserExceptionCode {
