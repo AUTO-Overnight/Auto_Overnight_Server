@@ -197,4 +197,22 @@ export class SchoolHttpClientService {
     });
     return responseDto;
   }
+
+  // async findStayOutRequests(
+  //   axiosRef: AxiosInstance,
+  //   dto: SchoolFindStayOutRequestsReqDto,
+  // ): Promise<void> {
+  //   const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
+  //
+  //   const requestConfig = {
+  //     headers: xml_RequestHeader,
+  //   };
+  //   const response = axiosRef.get(
+  //     schoolRequestUrl.STAY_OUT_LIST,
+  //     xml,
+  //     requestConfig,
+  //   );
+  //
+  //   console.log(response);
+  // }
 }
