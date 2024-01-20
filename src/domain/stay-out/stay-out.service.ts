@@ -5,6 +5,7 @@ import { SCHOOL_API_COOKIE_SESSION__KEY } from '../../config/school-api';
 import { Cookie } from 'tough-cookie';
 import { FindStayOutReqListReqDto } from './dto/request/find-stay-out-req-list-req.dto';
 import { wrapper as axiosCookieJarSupport } from 'axios-cookiejar-support';
+import { SchoolFindStayOutRequestsReqDto } from '../school-api/dto/request/school-find-stay-out-requests-req.dto';
 
 @Injectable()
 export class StayOutService {
@@ -18,6 +19,7 @@ export class StayOutService {
     const cookie = new Cookie({
       key: SCHOOL_API_COOKIE_SESSION__KEY,
       value: dto.cookies,
+      path: '/',
     });
 
     // 쿠키로 사용자 정보 조회
@@ -26,17 +28,20 @@ export class StayOutService {
       cookie,
     );
 
-    // const schoolFindStayOutReqListReqDto = SchoolFindStayOutRequestsReqDto.of(
-    //   dto.year,
-    //   dto.semester,
-    //   // TODO: name 추가할 경우 삽입
-    //   dto.name,
-    // );
+    // 외박 신청 조회 학교 API를 위한 RequestDto 생성
+    const schoolFindStayOutReqListReqDto = SchoolFindStayOutRequestsReqDto.of(
+      dto.year,
+      dto.semester,
+      userInfo.userStudentId,
+      userInfo.username,
+    );
 
-    // this.schoolHttpClientService.findStayOutRequests(
-    //   this.httpService.axiosRef,
-    //   dto,
-    // );
+    // 외박 신청 내역 조회
+    await this.schoolHttpClientService.findStayOutRequests(
+      this.httpService.axiosRef,
+      cookie,
+      schoolFindStayOutReqListReqDto,
+    );
     return { message: '테스트 성공', userInfo };
   }
 }

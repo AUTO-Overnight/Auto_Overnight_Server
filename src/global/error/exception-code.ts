@@ -9,6 +9,7 @@ export class ValidationExceptionCode {
 
 export class AuthExceptionCode {
   static AUTH_FAILED = 'A0000';
+  static INVALID_COOKIE = 'A0002';
   static PROVIDED_USERNAME_AND_COOKIE_DO_NOT_MATCH = 'A0001';
 }
 
