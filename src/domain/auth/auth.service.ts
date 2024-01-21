@@ -40,19 +40,6 @@ export class AuthService {
         requestCookie,
       );
 
-    const schoolFindSemesterResDto =
-      await this.schoolHttpClientService.findYearAndSemester(
-        this.httpService.axiosRef,
-        requestCookie,
-      );
-
-    // TODO: 외박 신청내역 조회하기
-
-    return LoginResDto.of(
-      cookies,
-      schoolFindUsernameResDto.username,
-      schoolFindSemesterResDto.semester,
-      schoolFindSemesterResDto.year,
-    );
+    return LoginResDto.of(cookies, schoolFindUsernameResDto.username);
   }
 }
