@@ -41,3 +41,11 @@ export const schoolApiErrorCode = {
 };
 export type SchoolApiErrorCode =
   (typeof schoolApiErrorCode)[keyof typeof schoolApiErrorCode];
+
+// 외박 승인 여부 코드 타입
+export const stayOutApprovalCode = {
+  APPROVED: '2',
+  REJECTED: '1',
+};
+export type StayOutApprovalCode =
+  (typeof stayOutApprovalCode)[keyof typeof stayOutApprovalCode];

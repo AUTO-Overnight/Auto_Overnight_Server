@@ -5,6 +5,7 @@ import {
   schoolApiErrorCode,
   SchoolApiErrorCode,
   schoolRequestUrl,
+  StayOutApprovalCode,
   x_www_form_urlencoded_RequestHeader,
   xml_RequestHeader,
 } from '../../config/school-api';
@@ -31,11 +32,14 @@ import { formatDate } from '../../util/string-utils';
 import { SchoolLoginReqDto } from './dto/request/school-login-req.dto';
 import { Cookie, CookieJar } from 'tough-cookie';
 import { SchoolFindStayOutRequestsReqDto } from './dto/request/school-find-stay-out-requests-req.dto';
+import { SchoolFindStayoutApplyListResDto } from './dto/response/school-find-stayout-apply-list-res.dto';
 
 @Injectable()
 export class SchoolHttpClientService {
   private readonly LOGIN_ERROR_MESSAGE_SEPERATOR: string = '"';
   private readonly LOGIN_ERROR_MESSAGE: string = '인증에 실패했습니다';
+  private readonly INVALID_COOKIE_ERROR_MESSAGE: string =
+    '쿠키/세션 정보가 만료되었거나 유효하지 않습니다.';
   private readonly LOGIN_ERROR_MESSAGE_INDEX: number = 3;
 
   async getSession(
@@ -55,7 +59,6 @@ export class SchoolHttpClientService {
 
     const cookies = response.request._headers.cookie;
 
-    // TODO: Server Error 맞는지 확인
     if (cookies == null) {
       throw new InternalServerException(AuthExceptionCode.AUTH_FAILED);
     }
@@ -206,7 +209,7 @@ export class SchoolHttpClientService {
     axiosRef: AxiosInstance,
     cookie: Cookie,
     dto: SchoolFindStayOutRequestsReqDto,
-  ): Promise<any> {
+  ): Promise<SchoolFindStayoutApplyListResDto> {
     const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
 
     const cookieJar = new CookieJar();
@@ -223,23 +226,45 @@ export class SchoolHttpClientService {
       xml,
       requestConfig,
     );
-
     await this.validateSchoolApiResponse(response.data);
 
-    return response;
+    // XML Response 파싱
+    const responseDto = SchoolFindStayoutApplyListResDto.of();
+    const $ = cheerio.load(response.data, { xml: true });
+
+    $('Row').each(function () {
+      const startDate = $(this).children('Col[id="outStayFrDt"]').text();
+      const endDate = $(this).children('Col[id="outStayToDt"]').text();
+      const approval: StayOutApprovalCode = $(this)
+        .children('Col[id="outStayStGbn"]')
+        .text();
+
+      if (startDate != '' || endDate != '' || approval != '') {
+        responseDto.addNewOne(
+          formatDate(startDate),
+          formatDate(endDate),
+          approval,
+        );
+      }
+    });
+
+    return responseDto;
   }
 
+  // TODO 제거? - 우선 내버려 둘테니, 나중에 필요 없을 것 같으면 삭제하도록 함
   // 학교 API 응답 XML Error에 따른 Exception Throw
   async validateSchoolApiResponse(responseXML: string): Promise<void> {
     const $ = cheerio.load(responseXML, { xml: true });
     const errorCode: SchoolApiErrorCode = $('Parameter[id="ErrorCode"]').text();
 
     switch (errorCode) {
+      case schoolApiErrorCode.NORMAL:
+        break;
       case schoolApiErrorCode.INVALID_COOKIE:
         throw new AuthFailedException(
           AuthExceptionCode.INVALID_COOKIE,
-          '쿠키/세션 정보가 만료되었거나 유효하지 않습니다.',
-        ); // TODO 메세지 분리
+          this.INVALID_COOKIE_ERROR_MESSAGE,
+        );
     }
   }
 }

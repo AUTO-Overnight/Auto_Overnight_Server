@@ -7,7 +7,7 @@ import { StayOutService } from './stay-out.service';
   imports: [
     HttpModule.register({
       maxRedirects: 10,
-      timeout: 50000, //TODO 확인
+      timeout: 50000,
       withCredentials: true,
     }),
     SchoolApiModule,

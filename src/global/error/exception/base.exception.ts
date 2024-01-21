@@ -32,6 +32,12 @@ export class AuthFailedException extends BaseException {
   }
 }
 
+export class InvalidCookieException extends BaseException {
+  constructor(errorCode: string, message?: string) {
+    super(HttpStatus.UNAUTHORIZED, errorCode, message);
+  }
+}
+
 export class InternalServerException extends BaseException {
   constructor(errorCode: string, message?: string) {
     super(HttpStatus.INTERNAL_SERVER_ERROR, errorCode, message);
