@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SchoolFindUsernameResDto } from './dto/response/school-find-username-res.dto';
 import {
+  SCHOOL_URL,
   schoolRequestUrl,
   x_www_form_urlencoded_RequestHeader,
   xml_RequestHeader,
@@ -26,6 +27,7 @@ import { SchoolFindDormitoryRewardsReqDto } from './dto/request/school-find-dorm
 import { SchoolFindDormitoryRewardsResDto } from './dto/response/school-find-dormitory-rewards-res.dto';
 import { formatDate } from '../../util/string-utils';
 import { SchoolLoginReqDto } from './dto/request/school-login-req.dto';
+import { Cookie, CookieJar } from 'tough-cookie';
 
 @Injectable()
 export class SchoolHttpClientService {
@@ -33,11 +35,21 @@ export class SchoolHttpClientService {
   private readonly LOGIN_ERROR_MESSAGE: string = '인증에 실패했습니다';
   private readonly LOGIN_ERROR_MESSAGE_INDEX: number = 3;
 
-  async getSession(axiosRef: AxiosInstance, id: string): Promise<string> {
+  async getSession(
+    axiosRef: AxiosInstance,
+    id: string,
+    cookieJar: CookieJar,
+  ): Promise<string> {
     const base64encode = Buffer.from(id, 'utf8').toString('base64');
+    const requestConfig = {
+      jar: cookieJar,
+    };
+
     const response = await axiosRef.get(
       schoolRequestUrl.SESSION + base64encode,
+      requestConfig,
     );
+
     const cookies = response.request._headers.cookie;
 
     if (cookies == null) {
@@ -46,31 +58,53 @@ export class SchoolHttpClientService {
     return cookies;
   }
 
-  async login(axiosRef: AxiosInstance, dto: SchoolLoginReqDto) {
+  async login(
+    axiosRef: AxiosInstance,
+    dto: SchoolLoginReqDto,
+  ): Promise<string> {
+    const cookieJar = new CookieJar();
+
     const requestConfig = {
       headers: x_www_form_urlencoded_RequestHeader,
+      jar: cookieJar,
     };
 
-    await axiosRef
-      .post(schoolRequestUrl.LOGIN, dto, requestConfig)
-      .then((res) => {
-        const resData = res.data.toString();
-        const resDataArray = resData.split(this.LOGIN_ERROR_MESSAGE_SEPERATOR);
-        if (resData.includes(this.LOGIN_ERROR_MESSAGE)) {
-          throw new AuthFailedException(
-            AuthExceptionCode.AUTH_FAILED,
-            resDataArray[this.LOGIN_ERROR_MESSAGE_INDEX],
-          );
-        }
-      });
+    const response = await axiosRef.post(
+      schoolRequestUrl.LOGIN,
+      dto,
+      requestConfig,
+    );
+
+    const responseMessage = response.data.toString();
+    const resDataArray = responseMessage.split(
+      this.LOGIN_ERROR_MESSAGE_SEPERATOR,
+    );
+    if (responseMessage.includes(this.LOGIN_ERROR_MESSAGE)) {
+      throw new AuthFailedException(
+        AuthExceptionCode.AUTH_FAILED,
+        resDataArray[this.LOGIN_ERROR_MESSAGE_INDEX],
+      );
+    }
+
+    return this.getSession(axiosRef, dto.internalId, response.config.jar);
   }
 
-  async findUserName(
+  async findUserInfo(
     axiosRef: AxiosInstance,
+    cookie: Cookie,
   ): Promise<SchoolFindUsernameResDto> {
+    // cookie 설정
+    const cookieJar = new CookieJar();
+    await cookieJar.setCookie(cookie, SCHOOL_URL);
+
+    const requestConfig = {
+      jar: cookieJar,
+    };
+
     const response = await axiosRef.post(
       schoolRequestUrl.NAME_ID,
       findUserNameXML,
+      requestConfig,
     );
 
     const $ = cheerio.load(response.data, {
@@ -91,10 +125,20 @@ export class SchoolHttpClientService {
 
   async findYearAndSemester(
     axiosRef: AxiosInstance,
+    cookie: Cookie,
   ): Promise<SchoolFindSemesterResDto> {
+    // cookie 설정
+    const cookieJar = new CookieJar();
+    await cookieJar.setCookie(cookie, SCHOOL_URL);
+
+    const requestConfig = {
+      jar: cookieJar,
+    };
+
     const response = await axiosRef.post(
       schoolRequestUrl.YEAR_SEMESTER,
       findYearAndSemesterXML,
+      requestConfig,
     );
 
     const $ = cheerio.load(response.data, { xmlMode: true });
@@ -113,11 +157,16 @@ export class SchoolHttpClientService {
   async findDormitoryRewards(
     axiosRef: AxiosInstance,
     dto: SchoolFindDormitoryRewardsReqDto,
+    cookie: Cookie,
   ): Promise<SchoolFindDormitoryRewardsResDto> {
     const xml = dto.toXmlForSchoolRequest(FindDormitoryStudentInfoXML);
+    // cookie 설정
+    const cookieJar = new CookieJar();
+    await cookieJar.setCookie(cookie, SCHOOL_URL);
 
     const requestConfig = {
       headers: xml_RequestHeader,
+      jar: cookieJar,
     };
 
     const response = await axiosRef.post(
