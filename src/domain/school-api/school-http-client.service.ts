@@ -186,16 +186,14 @@ export class SchoolHttpClientService {
     }
 
     $('Row').each(function () {
-      const cmpScr = $(this).children('Col[id="cmpScr"]').text();
-      const lifSstArdGbn = $(this).children('Col[id="lifSstArdGbn"]').text();
-      const ardInptDt = $(this).children('Col[id="ardInptDt"]').text();
-      const lifSstArdCtnt = $(this).children('Col[id="lifSstArdCtnt"]').text();
-      responseDto.addNewOne(
-        cmpScr,
-        lifSstArdGbn,
-        formatDate(ardInptDt),
-        lifSstArdCtnt,
-      );
+      const score = $(this).children('Col[id="cmpScr"]').text();
+      const scoreType = $(this).children('Col[id="lifSstArdGbn"]').text();
+      const date = $(this).children('Col[id="ardInptDt"]').text();
+      const content = $(this).children('Col[id="lifSstArdCtnt"]').text();
+
+      if (score != '' || scoreType != '' || date != '' || content != '') {
+        responseDto.addNewOne(score, scoreType, formatDate(date), content);
+      }
     });
     return responseDto;
   }
