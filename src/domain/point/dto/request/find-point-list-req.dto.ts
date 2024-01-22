@@ -13,9 +13,5 @@ export class FindPointListReqDto {
 
   @IsString()
   @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
   cookies: string;
 }
