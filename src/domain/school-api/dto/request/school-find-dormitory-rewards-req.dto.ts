@@ -1,8 +1,8 @@
 export class SchoolFindDormitoryRewardsReqDto {
-  yy: string;
-  tmGbn: string;
-  schregNo: string;
-  stdKorNm: string;
+  yy: string; // 연도
+  tmGbn: string; // 학기
+  schregNo: string; // 학번
+  stdKorNm: string; // 이름
 
   private constructor(
     yy: string,
