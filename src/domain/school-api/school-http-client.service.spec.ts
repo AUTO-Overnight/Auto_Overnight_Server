@@ -11,7 +11,7 @@ import {
 } from '../../global/error/exception-code';
 import { SchoolFindDormitoryRewardsReqDto } from './dto/request/school-find-dormitory-rewards-req.dto';
 import {
-  SCHOOL_API_COOKIE_SESSION__KEY,
+  SCHOOL_API_COOKIE_SESSION_KEY,
   SCHOOL_URL,
 } from '../../config/school-api';
 import { Cookie, CookieJar } from 'tough-cookie';
@@ -86,7 +86,7 @@ describe('SchoolHttpClientService', () => {
 
       // when
       try {
-        await schoolHttpClientService.findUserName(axiosInstance);
+        await schoolHttpClientService.findUserInfo(axiosInstance, new Cookie());
       } catch (e) {
         // then
         expect(e).toBeInstanceOf(InternalServerException);
@@ -105,7 +105,10 @@ describe('SchoolHttpClientService', () => {
 
       // when
       try {
-        await schoolHttpClientService.findYearAndSemester(axiosInstance);
+        await schoolHttpClientService.findYearAndSemester(
+          axiosInstance,
+          new Cookie(),
+        );
       } catch (e) {
         // then
         expect(e).toBeInstanceOf(InternalServerException);
@@ -135,6 +138,7 @@ describe('SchoolHttpClientService', () => {
         await schoolHttpClientService.findDormitoryRewards(
           axiosInstance,
           schoolFindDormitoryStudentInfoReqDto,
+          new Cookie(),
         );
       } catch (e) {
         // then
@@ -150,7 +154,7 @@ describe('SchoolHttpClientService', () => {
         withCredentials: true,
       });
       const cookie = new Cookie({
-        key: SCHOOL_API_COOKIE_SESSION__KEY,
+        key: SCHOOL_API_COOKIE_SESSION_KEY,
         value: 'cookie',
       });
       axiosInstance.defaults.jar = new CookieJar();
@@ -169,6 +173,7 @@ describe('SchoolHttpClientService', () => {
         await schoolHttpClientService.findDormitoryRewards(
           axiosInstance,
           schoolFindDormitoryStudentInfoReqDto,
+          new Cookie({ key: SCHOOL_API_COOKIE_SESSION_KEY, value: 'cookie' }),
         );
       } catch (e) {
         // then

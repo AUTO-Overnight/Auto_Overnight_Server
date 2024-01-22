@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { SchoolHttpClientService } from '../school-api/school-http-client.service';
 import { Test } from '@nestjs/testing';
 import axios from 'axios';
-import { AuthFailedException } from '../../global/error/exception/base.exception';
 import { PointService } from './point.service';
 import { FindPointListReqDto } from './dto/request/find-point-list-req.dto';
 import { CookieJar } from 'tough-cookie';
@@ -42,50 +41,18 @@ describe('PointService', () => {
   });
 
   describe('상벌점 내역 조회', () => {
-    it('요청한 사용자 이름과 쿠키 정보가 일치하지 않다면 예외가 발생한다', async () => {
-      // given
-      httpService.axiosRef.defaults.jar = new CookieJar();
-      await schoolHttpClientService.login(
-        httpService.axiosRef,
-        SchoolLoginReqDto.of(process.env.LOGIN_ID, process.env.LOGIN_PASSWORD),
-      );
-      const cookie = await schoolHttpClientService.getSession(
-        httpService.axiosRef,
-        process.env.LOGIN_ID,
-      );
-
-      const dto = new FindPointListReqDto();
-      dto.cookies = cookie;
-      dto.name = '홍길동';
-      dto.semester = '2';
-      dto.year = '2021';
-
-      // when
-      try {
-        await pointService.findPointList(dto);
-      } catch (e) {
-        // then
-        expect(e).toBeInstanceOf(AuthFailedException);
-      }
-    }, 10000);
-
     it('유효하지 않은 년도의 상벌점 내역 조회 요청 시, 빈 배열을 반환한다.', async () => {
       // given
       httpService.axiosRef.defaults.jar = new CookieJar();
-      await schoolHttpClientService.login(
+      const cookie = await schoolHttpClientService.login(
         httpService.axiosRef,
         SchoolLoginReqDto.of(process.env.LOGIN_ID, process.env.LOGIN_PASSWORD),
-      );
-      const cookie = await schoolHttpClientService.getSession(
-        httpService.axiosRef,
-        process.env.LOGIN_ID,
       );
 
       const dto = new FindPointListReqDto();
       dto.cookies = cookie;
-      dto.name = process.env.LOGIN_NAME;
       dto.semester = '2';
-      dto.year = '2019';
+      dto.year = '2000';
 
       // when
       const res = await pointService.findPointList(dto);
