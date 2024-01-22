@@ -1,5 +1,5 @@
 export const SCHOOL_URL = 'https://dream.tukorea.ac.kr/';
-export const SCHOOL_API_COOKIE_SESSION__KEY: string = 'JSVSESSIONID';
+export const SCHOOL_API_COOKIE_SESSION_KEY: string = 'JSVSESSIONID';
 
 export const schoolRequestUrl = {
   LOGIN: 'https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null',
