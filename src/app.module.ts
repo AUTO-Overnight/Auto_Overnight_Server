@@ -3,7 +3,10 @@ import { AuthController } from './controller/auth.controller';
 import { PointController } from './controller/point.controller';
 import { StayOutController } from './controller/stay-out.controller';
 import { LoggingModule } from './infra/logging/logging.module';
-import { GlobalExceptionFilter } from './global/filter/exception.filter';
+import {
+  GlobalExceptionFilter,
+  ValidationExceptionFilter,
+} from './global/filter/exception.filter';
 import { AuthModule } from './domain/auth/auth.module';
 import { PointModule } from './domain/point/point.module';
 
@@ -11,6 +14,10 @@ import { PointModule } from './domain/point/point.module';
   imports: [LoggingModule, AuthModule, PointModule],
   controllers: [AuthController, PointController, StayOutController],
   providers: [
+    {
+      provide: 'VALIDATION_EXCEPTION_FILTER',
+      useClass: ValidationExceptionFilter,
+    },
     {
       provide: 'GLOBAL_EXCEPTION_FILTER',
       useClass: GlobalExceptionFilter,

@@ -3,6 +3,10 @@ export class GlobalExceptionCode {
   static UNCATCHED = 'G0000';
 }
 
+export class ValidationExceptionCode {
+  static INVALID_VALUE = 'V0000';
+}
+
 export class AuthExceptionCode {
   static AUTH_FAILED = 'A0000';
   static PROVIDED_USERNAME_AND_COOKIE_DO_NOT_MATCH = 'A0001';
