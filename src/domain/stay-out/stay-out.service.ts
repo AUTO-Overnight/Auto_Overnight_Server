@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { SchoolHttpClientService } from '../school-api/school-http-client.service';
-import { SCHOOL_API_COOKIE_SESSION__KEY } from '../../config/school-api';
+import { SCHOOL_API_COOKIE_SESSION_KEY } from '../../config/school-api';
 import { Cookie } from 'tough-cookie';
 import { FindStayoutApplyListReqDto } from './dto/request/find-stayout-apply-list-req.dto';
 import { wrapper as axiosCookieJarSupport } from 'axios-cookiejar-support';
@@ -20,7 +20,7 @@ export class StayOutService {
     dto: FindStayoutApplyListReqDto,
   ): Promise<SchoolFindStayoutApplyListResDto> {
     const cookie = new Cookie({
-      key: SCHOOL_API_COOKIE_SESSION__KEY,
+      key: SCHOOL_API_COOKIE_SESSION_KEY,
       value: dto.cookies,
       path: '/',
       httpOnly: true,
