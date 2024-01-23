@@ -24,7 +24,7 @@ export const findYearAndSemesterXML = `<?xml version="1.0" encoding="UTF-8"?>
 	</Dataset>
 </Root>`;
 
-// 기숙사행 정보 조회 XML
+// 기숙사생 정보 조회 XML
 export const FindDormitoryStudentInfoXML = `<?model version="1.0" encoding="UTF-8"?>
     <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
         <Parameters>
