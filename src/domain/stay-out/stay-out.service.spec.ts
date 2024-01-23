@@ -54,8 +54,4 @@ describe('StayOutService', () => {
       expect(res.stayOutApproval).toEqual([]);
     });
   });
-
-  // TODO 올바르지 않은 연도 / 학기 입력시
-
-  // TODO 올바르지 않은 쿠키 입력시 INVALID COOKIE반환
 });
