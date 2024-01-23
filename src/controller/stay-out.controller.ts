@@ -10,6 +10,6 @@ export class StayOutController {
   async findStayOutReqList(
     @Body() dto: FindStayoutApplyListReqDto,
   ): Promise<SchoolFindStayoutApplyListResDto> {
-    return await this.stayOutService.findStayOutReqList(dto);
+    return await this.stayOutService.findStayOutApplyList(dto);
   }
 }

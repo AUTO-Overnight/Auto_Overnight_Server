@@ -16,7 +16,7 @@ export class StayOutService {
   ) {
     axiosCookieJarSupport(this.httpService.axiosRef);
   }
-  async findStayOutReqList(
+  async findStayOutApplyList(
     dto: FindStayoutApplyListReqDto,
   ): Promise<SchoolFindStayoutApplyListResDto> {
     const cookie = new Cookie({
