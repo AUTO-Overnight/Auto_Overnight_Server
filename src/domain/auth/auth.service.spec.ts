@@ -5,7 +5,6 @@ import { Test } from '@nestjs/testing';
 import axios from 'axios';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-import { AuthFailedException } from '../../global/error/exception/base.exception';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -45,39 +44,7 @@ describe('AuthService', () => {
       // then
       expect(result).toBeDefined();
       expect(result.cookies).toBeDefined();
-      expect(result.name).toEqual('김하린');
-    }, 10000);
-
-    it('틀린 아이디를 입력하면 예외가 발생한다', async () => {
-      // given
-      const dto = {
-        id: process.env.LOGIN_ID + '1',
-        password: process.env.LOGIN_PASSWORD,
-      };
-
-      // when
-      try {
-        await authService.loginForSchool(dto);
-      } catch (e) {
-        // then
-        expect(e).toBeInstanceOf(AuthFailedException);
-      }
-    }, 10000);
-
-    it('틀린 비밀번호를 입력하면 예외가 발생한다', async () => {
-      // given
-      const dto = {
-        id: process.env.LOGIN_ID,
-        password: process.env.LOGIN_PASSWORD + '1',
-      };
-
-      // when
-      try {
-        await authService.loginForSchool(dto);
-      } catch (e) {
-        // then
-        expect(e).toBeInstanceOf(AuthFailedException);
-      }
+      expect(result.name).toEqual(process.env.LOGIN_NAME);
     }, 10000);
   });
 });

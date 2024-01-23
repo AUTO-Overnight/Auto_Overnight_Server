@@ -1,4 +1,5 @@
 export const SCHOOL_URL = 'https://dream.tukorea.ac.kr/';
+export const SCHOOL_API_COOKIE_SESSION_KEY: string = 'JSVSESSIONID';
 
 export const schoolRequestUrl = {
   LOGIN: 'https://ksc.tukorea.ac.kr/sso/login_proc.jsp?returnurl=null',
@@ -22,6 +23,13 @@ export const schoolRequestUrl = {
     'aff/dorm/DormCtr/saveOutAplyList.do?menuId=MPB0022&pgmId=PPB0021',
 };
 
-export const schoolLoginRequestHeader = {
+export const x_www_form_urlencoded_RequestHeader = {
   'Content-Type': 'application/x-www-form-urlencoded',
 };
+
+export const xml_RequestHeader = {
+  'Content-Type': 'text/xml',
+};
+
+// 1: 1학기, 2: 2학기, 5: 여름학기, 6: 겨울학기
+export const semesterCode = ['1', '2', '5', '6'];

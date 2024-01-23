@@ -5,9 +5,10 @@ import { StayOutController } from './controller/stay-out.controller';
 import { LoggingModule } from './infra/logging/logging.module';
 import { GlobalExceptionFilter } from './global/filter/exception.filter';
 import { AuthModule } from './domain/auth/auth.module';
+import { PointModule } from './domain/point/point.module';
 
 @Module({
-  imports: [LoggingModule, AuthModule],
+  imports: [LoggingModule, AuthModule, PointModule],
   controllers: [AuthController, PointController, StayOutController],
   providers: [
     {

@@ -2,23 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { LoginReqDto } from './dto/request/login-req.dto';
 import { LoginResDto } from './dto/response/login-res.dto';
 import { HttpService } from '@nestjs/axios';
-import {
-  schoolLoginRequestHeader,
-  schoolRequestUrl,
-} from '../../config/school-api';
 import { SchoolLoginReqDto } from '../school-api/dto/request/school-login-req.dto';
-import { CookieJar } from 'tough-cookie';
+import { Cookie } from 'tough-cookie';
 import { wrapper as axiosCookieJarSupport } from 'axios-cookiejar-support';
 import { SchoolHttpClientService } from '../school-api/school-http-client.service';
-import { AuthFailedException } from '../../global/error/exception/base.exception';
-import { AuthExceptionCode } from '../../global/error/exception-code';
+import { SCHOOL_API_COOKIE_SESSION_KEY } from '../../config/school-api';
 
 @Injectable()
 export class AuthService {
-  private readonly LOGIN_ERROR_MESSAGE_SEPERATOR: string = '"';
-  private readonly LOGIN_ERROR_MESSAGE: string = '인증에 실패했습니다';
-  private readonly LOGIN_ERROR_MESSAGE_INDEX: number = 3;
-
   constructor(
     private readonly httpService: HttpService,
     private readonly schoolHttpClientService: SchoolHttpClientService,
@@ -27,27 +18,32 @@ export class AuthService {
   }
 
   async login(dto: LoginReqDto): Promise<LoginResDto> {
-    this.httpService.axiosRef.defaults.jar = new CookieJar();
-    await this.loginForSchool(dto);
-
-    // 통합 정보 시스템에서 세션 얻기
-    const base64encode = Buffer.from(dto.id, 'utf8').toString('base64');
-    const loginForSchoolResponse = await this.httpService.axiosRef.get(
-      schoolRequestUrl.SESSION + base64encode,
+    const loginRequestDto = SchoolLoginReqDto.of(dto.id, dto.password);
+    // 로그인
+    const cookies = await this.schoolHttpClientService.login(
+      this.httpService.axiosRef,
+      loginRequestDto,
     );
-    const cookies = loginForSchoolResponse.request._headers.cookie;
-    if (cookies == null) {
-      throw new AuthFailedException(AuthExceptionCode.AUTH_FAILED);
-    }
 
-    // 학생 이름과 학기 정보 얻기
+    // 쿠키 설정
+    const requestCookie = new Cookie({
+      key: SCHOOL_API_COOKIE_SESSION_KEY,
+      value: cookies,
+      secure: true,
+      httpOnly: true,
+    });
+
+    // 학생 정보와 학기 정보 얻기
     const schoolFindUsernameResDto =
-      await this.schoolHttpClientService.findUserName(
+      await this.schoolHttpClientService.findUserInfo(
         this.httpService.axiosRef,
+        requestCookie,
       );
+
     const schoolFindSemesterResDto =
       await this.schoolHttpClientService.findYearAndSemester(
         this.httpService.axiosRef,
+        requestCookie,
       );
 
     // TODO: 외박 신청내역 조회하기
@@ -58,25 +54,5 @@ export class AuthService {
       schoolFindSemesterResDto.semester,
       schoolFindSemesterResDto.year,
     );
-  }
-
-  async loginForSchool(dto: LoginReqDto) {
-    const loginRequestDto = SchoolLoginReqDto.of(dto.id, dto.password);
-    const requestConfig = {
-      headers: schoolLoginRequestHeader,
-    };
-
-    await this.httpService.axiosRef
-      .post(schoolRequestUrl.LOGIN, loginRequestDto, requestConfig)
-      .then((res) => {
-        const resData = res.data.toString();
-        const resDataArray = resData.split(this.LOGIN_ERROR_MESSAGE_SEPERATOR);
-        if (resData.includes(this.LOGIN_ERROR_MESSAGE)) {
-          throw new AuthFailedException(
-            AuthExceptionCode.AUTH_FAILED,
-            resDataArray[this.LOGIN_ERROR_MESSAGE_INDEX],
-          );
-        }
-      });
   }
 }

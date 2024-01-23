@@ -1,4 +1,4 @@
-export const findUserNmXML = `<?xml version="1.0" encoding="UTF-8"?> 
+export const findUserNameXML = `<?xml version="1.0" encoding="UTF-8"?> 
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="columnList">persNo|userNm</Parameter>
@@ -6,7 +6,7 @@ export const findUserNmXML = `<?xml version="1.0" encoding="UTF-8"?>
 	</Parameters>
 </Root>`;
 
-export const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
+export const findYearAndSemesterXML = `<?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
 		<Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
@@ -23,3 +23,30 @@ export const findYYtmgbnXML = `<?xml version="1.0" encoding="UTF-8"?>
 		</Rows>
 	</Dataset>
 </Root>`;
+
+export const FindDormitoryStudentInfoXML = `<?model version="1.0" encoding="UTF-8"?>
+    <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
+        <Parameters>
+            <Parameter id="_ga">GA1.3.1065330987.1626699518</Parameter>
+            <Parameter id="requestTimeStr">1626877490927</Parameter>
+        </Parameters>
+        <Dataset id="DS_COND">
+            <ColumnInfo>
+                <Column id="yy" type="STRING" size="256"  />
+                <Column id="tmGbn" type="STRING" size="256"  />
+                <Column id="schregNo" type="STRING" size="256"  />
+                <Column id="stdKorNm" type="STRING" size="256"  />
+                <Column id="outStayStGbn" type="STRING" size="256"  />
+            </ColumnInfo>
+            <Rows>
+                <Row type="update">
+                    <Col id="yy">{yy}</Col>
+                    <Col id="tmGbn">{tmGbn}</Col>
+                    <Col id="schregNo">{schregNo}</Col>
+                    <Col id="stdKorNm">{stdKorNm}</Col>
+                    <OrgRow>
+                    </OrgRow>
+                </Row>
+            </Rows>
+        </Dataset>
+    </Root>`;
