@@ -33,3 +33,19 @@ export const xml_RequestHeader = {
 
 // 1: 1학기, 2: 2학기, 5: 여름학기, 6: 겨울학기
 export const semesterCode = ['1', '2', '5', '6'];
+
+// 학교 api 에러코드에 대한 타입
+export const schoolApiErrorCode = {
+  NORMAL: '0',
+  INVALID_COOKIE: '-600',
+};
+export type SchoolApiErrorCode =
+  (typeof schoolApiErrorCode)[keyof typeof schoolApiErrorCode];
+
+// 외박 승인 여부 코드 타입
+export const stayOutApprovalCode = {
+  APPROVED: '2',
+  REJECTED: '1',
+};
+export type StayOutApprovalCode =
+  (typeof stayOutApprovalCode)[keyof typeof stayOutApprovalCode];

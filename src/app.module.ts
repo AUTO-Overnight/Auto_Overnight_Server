@@ -9,9 +9,10 @@ import {
 } from './global/filter/exception.filter';
 import { AuthModule } from './domain/auth/auth.module';
 import { PointModule } from './domain/point/point.module';
+import { StayOutModule } from './domain/stay-out/stay-out.module';
 
 @Module({
-  imports: [LoggingModule, AuthModule, PointModule],
+  imports: [LoggingModule, AuthModule, PointModule, StayOutModule],
   controllers: [AuthController, PointController, StayOutController],
   providers: [
     {
