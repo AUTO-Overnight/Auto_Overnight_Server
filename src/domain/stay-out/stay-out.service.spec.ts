@@ -29,7 +29,7 @@ describe('StayOutService', () => {
   });
 
   describe('외박신청내역 조회', () => {
-    it('외박신청내역이 있는 경우 외박신청내역 정상적으로 반환', async () => {
+    it('외박신청내역이 없는 경우 외박신청내역 빈 배열로 반환', async () => {
       // given : 로그인
       const schoolLoginReqDto = SchoolLoginReqDto.of(
         process.env.LOGIN_ID,
