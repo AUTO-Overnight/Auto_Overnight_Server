@@ -1,4 +1,22 @@
 // GlobalException
 export class GlobalExceptionCode {
-  static UnCatched = 'G0000';
+  static UNCATCHED = 'G0000';
+}
+
+export class ValidationExceptionCode {
+  static INVALID_VALUE = 'V0000';
+}
+
+export class AuthExceptionCode {
+  static AUTH_FAILED = 'A0000';
+  static INVALID_COOKIE = 'A0002';
+  static PROVIDED_USERNAME_AND_COOKIE_DO_NOT_MATCH = 'A0001';
+}
+
+export class UserExceptionCode {
+  static FIND_USER_INFO_FAILED = 'U0000';
+}
+
+export class PointExceptionCode {
+  static FIND_POINT_LIST_FAILED = 'P0000';
 }
