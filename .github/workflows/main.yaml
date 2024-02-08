@@ -1,0 +1,29 @@
+# source: https://github.com/actions/starter-workflows/blob/main/ci/node.js.yml
+
+name: Run Jest Test
+
+on:
+  push:
+    branches: [ test ]
+  pull_request:
+    branches: [ test ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # 세 버전에서 빌드 및 테스트 실행
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+
+    steps:
+      - uses: actions/checkout@v3 # 저장소 체크아웃
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with: # 액션에 필요한 것들
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present # package.json에 빌드 스크립트 실행되어 있으면 실행
+      - run: npm test # jest 실행
