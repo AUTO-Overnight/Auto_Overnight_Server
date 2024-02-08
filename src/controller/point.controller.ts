@@ -7,6 +7,7 @@ import { SchoolFindDormitoryRewardsResDto } from '../domain/school-api/dto/respo
 export class PointController {
   constructor(private readonly pointService: PointService) {}
 
+  // CI 테스트용 주석
   @Get()
   async findPointList(
     @Body() dto: FindPointListReqDto,
